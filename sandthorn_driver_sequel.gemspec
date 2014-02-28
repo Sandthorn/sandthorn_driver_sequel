@@ -6,10 +6,10 @@ require 'sandthorn_driver_sequel/version'
 Gem::Specification.new do |spec|
   spec.name          = "sandthorn_driver_sequel"
   spec.version       = SandthornDriverSequel::VERSION
-  spec.authors       = ["Morgan Hallgren"]
-  spec.email         = ["morgan.hallgren@upptec.se"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.authors       = ["Lars Krantz", "Morgan Hallgren"]
+  spec.email         = ["lars.krantz@alaz.se", "morgan.hallgren@upptec.se"]
+  spec.description   = %q{sequel driver for sandthorn}
+  spec.summary       = %q{sequel driver for sandthorn}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -20,4 +20,17 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "gem-release"
+  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "pry-doc"
+  spec.add_development_dependency "awesome_print"
+  spec.add_development_dependency "autotest-standalone"
+  spec.add_development_dependency "uuidtools"
+  spec.add_development_dependency "ruby-beautify"
+
+  spec.add_runtime_dependency     "sequel"
+  spec.add_runtime_dependency     "pg"
 end
