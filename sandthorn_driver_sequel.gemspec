@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "sandthorn_driver_sequel"
   spec.version       = SandthornDriverSequel::VERSION
   spec.authors       = ["Lars Krantz", "Morgan Hallgren"]
-  spec.email         = ["lars.krantz@alaz.se", "morgan.hallgren@upptec.se"]
+  spec.email         = ["lars.krantz@alaz.se", "morgan.hallgren@gmail.com"]
   spec.description   = %q{sequel driver for sandthorn}
   spec.summary       = %q{sequel driver for sandthorn}
   spec.homepage      = ""

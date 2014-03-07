@@ -48,7 +48,7 @@ module SandthornDriverSequel
             foreign_key :aggregate_table_id, aggr_table, on_update: :cascade
             Integer :aggregate_version, null: false
             String :event_name, size: 255, null: false
-            String :event_data, text: true, null: true
+            Blob :event_data, null: true
             DateTime :timestamp, null: false
 
             index [:event_name]
