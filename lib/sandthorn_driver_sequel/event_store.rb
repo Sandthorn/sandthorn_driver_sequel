@@ -32,7 +32,8 @@ module SandthornDriverSequel
             error_message = "#{aggregate_type} with id #{aggregate_id}: expected event with version #{current_aggregate_version}, but got #{event[:aggregate_version]}"
             raise SandthornDriverSequel::Errors::ConcurrencyError.new(error_message)
           end
-          to_insert = {aggregate_table_id: pk_id, aggregate_version: event[:aggregate_version], event_name: event[:event_name], event_data: event[:event_data], timestamp: timestamp}
+          blob = event[:event_data].nil? ? nil : Sequel.blob(event[:event_data])
+          to_insert = {aggregate_table_id: pk_id, aggregate_version: event[:aggregate_version], event_name: event[:event_name], event_data: blob, timestamp: timestamp}
           db[events_table_name].insert(to_insert)
         end
         db[aggregates_table_name].where(id: pk_id).update(aggregate_version: current_aggregate_version)
