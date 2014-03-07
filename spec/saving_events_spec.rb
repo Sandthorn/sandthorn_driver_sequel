@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'msgpack'
 
 module SandthornDriverSequel
 	describe EventStore do
@@ -67,5 +68,20 @@ module SandthornDriverSequel
 				ids.any? { |e| e == aggregate_id_3 }.should be_true
 			end
 		end
+		context "when saving events that are serilized with msgpack" do
+			let(:test_data) { {name: "test", hash: {t: 123}} }
+			let(:test_events) do
+				e = []
+				data = MessagePack.pack(test_data, symbolize_keys: true)
+				e << {aggregate_version: 1, event_name: "new", event_args: nil, event_data: data}
+			end
+			let(:aggregate_id_1) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
+			it "should save and get events that are serilized with msgpack" do
+				event_store.save_events test_events, 0, aggregate_id_1, String
+				events = event_store.get_aggregate aggregate_id_1, String
+				expect(MessagePack.unpack(events.first[:event_data], symbolize_keys: true)).to eql test_data
+			end
+		end
+
 	end
 end
