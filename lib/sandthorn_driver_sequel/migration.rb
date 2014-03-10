@@ -76,7 +76,7 @@ module SandthornDriverSequel
           db.create_table(snapshots_table_name) do
             primary_key :id
             Integer :aggregate_version, null: false
-            String :snapshot_data, text: true, null: false
+            Blob :snapshot_data, null: false
             foreign_key :aggregate_table_id, aggr_table, on_delete: :cascade, on_update: :cascade
             index [:aggregate_table_id], unique: true
           end

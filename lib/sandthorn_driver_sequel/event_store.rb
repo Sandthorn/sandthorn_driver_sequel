@@ -56,7 +56,8 @@ module SandthornDriverSequel
           raise SandthornDriverSequel::Errors::WrongAggregateVersionError.new error_message
         end
         if current_snapshot.nil?
-          to_insert = {aggregate_version: aggregate_version, snapshot_data: aggregate_snapshot[:event_data], aggregate_table_id: pk_id}
+          blob = aggregate_snapshot[:event_data].nil? ? nil : Sequel.blob(aggregate_snapshot[:event_data])
+          to_insert = {aggregate_version: aggregate_version, snapshot_data: blob, aggregate_table_id: pk_id}
           db[snapshots_table_name].insert(to_insert)
         else
           to_update = {aggregate_version: aggregate_version, snapshot_data: aggregate_snapshot[:event_data] }
