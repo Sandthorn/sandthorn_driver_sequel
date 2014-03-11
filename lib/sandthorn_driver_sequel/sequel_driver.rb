@@ -5,16 +5,16 @@ module SandthornDriverSequel
     def initialize args = {}
       @url = args.fetch(:url)
       Sequel.default_timezone = :utc
+      @db = Sequel.connect(@url, :connection_handling => :stack)
     end
     def execute &block
-      Sequel.connect(@url) { |db| return block.call db}
+      return block.call @db
     end
     def execute_in_transaction &block
-      Sequel.connect(@url) do |db|
-        db.transaction do
-          return block.call db
-        end
-      end
-    end 
+      @db.transaction {|tr|
+        return block.call @db
+      }
+    end
+
   end
 end
