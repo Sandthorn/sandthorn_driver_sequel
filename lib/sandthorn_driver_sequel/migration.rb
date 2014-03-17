@@ -48,7 +48,7 @@ module SandthornDriverSequel
             foreign_key :aggregate_table_id, aggr_table, on_update: :cascade
             Integer :aggregate_version, null: false
             String :event_name, size: 255, null: false
-            Blob :event_data, null: true
+            String :event_data, text: true, null: true
             DateTime :timestamp, null: false
 
             index [:event_name]
@@ -76,7 +76,7 @@ module SandthornDriverSequel
           db.create_table(snapshots_table_name) do
             primary_key :id
             Integer :aggregate_version, null: false
-            Blob :snapshot_data, null: false
+            String :snapshot_data, text: true, null: false
             foreign_key :aggregate_table_id, aggr_table, on_delete: :cascade, on_update: :cascade
             index [:aggregate_table_id], unique: true
           end

@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "uuidtools"
   spec.add_development_dependency "ruby-beautify"
   spec.add_development_dependency "msgpack"
+  spec.add_development_dependency "snappy"
 
   spec.add_runtime_dependency     "sequel"
   spec.add_runtime_dependency     "pg"
