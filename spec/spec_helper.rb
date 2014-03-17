@@ -22,6 +22,7 @@ end
 
 def event_store_url
   "sqlite://spec/db/event_store.sqlite3"
+  #"postgres://morganhallgren@localhost:5432/test_1"
 end
 
 def event_store context: :test

@@ -32,8 +32,7 @@ module SandthornDriverSequel
             error_message = "#{aggregate_type} with id #{aggregate_id}: expected event with version #{current_aggregate_version}, but got #{event[:aggregate_version]}"
             raise SandthornDriverSequel::Errors::ConcurrencyError.new(error_message)
           end
-          blob = event[:event_data].nil? ? nil : Sequel.blob(event[:event_data])
-          to_insert = {aggregate_table_id: pk_id, aggregate_version: event[:aggregate_version], event_name: event[:event_name], event_data: blob, timestamp: timestamp}
+          to_insert = ({aggregate_table_id: pk_id, aggregate_version: event[:aggregate_version], event_name: event[:event_name], event_data: event[:event_data], timestamp: timestamp})
           db[events_table_name].insert(to_insert)
         end
         db[aggregates_table_name].where(id: pk_id).update(aggregate_version: current_aggregate_version)
@@ -56,8 +55,7 @@ module SandthornDriverSequel
           raise SandthornDriverSequel::Errors::WrongAggregateVersionError.new error_message
         end
         if current_snapshot.nil?
-          blob = aggregate_snapshot[:event_data].nil? ? nil : Sequel.blob(aggregate_snapshot[:event_data])
-          to_insert = {aggregate_version: aggregate_version, snapshot_data: blob, aggregate_table_id: pk_id}
+          to_insert = {aggregate_version: aggregate_version, snapshot_data: aggregate_snapshot[:event_data], aggregate_table_id: pk_id }
           db[snapshots_table_name].insert(to_insert)
         else
           to_update = {aggregate_version: aggregate_version, snapshot_data: aggregate_snapshot[:event_data] }
@@ -162,14 +160,31 @@ module SandthornDriverSequel
       end
     end
     private
+
     def aggregate_events after_aggregate_version: 0, aggregate_id: nil
+      
       rel = "#{events_table_name}__aggregate_version".to_sym
       where_proc = eval("lambda{ #{rel} > after_aggregate_version }")
       driver.execute do |db|
         query = db[events_table_name].join(aggregates_table_name, id: :aggregate_table_id, aggregate_id: aggregate_id)
         query = query.where &where_proc
-        return query.select(rel, :aggregate_id, :sequence_number, :event_name, :event_data, :timestamp).order(:sequence_number).all
+        result = query.select(rel, :aggregate_id, :sequence_number, :event_name, :event_data, :timestamp).order(:sequence_number).all
       end
+          
+      # result = nil
+      # Benchmark.bm do |x|
+      #   x.report("find") { 
+      #     rel = "#{events_table_name}__aggregate_version".to_sym
+      #     where_proc = eval("lambda{ #{rel} > after_aggregate_version }")
+      #     driver.execute do |db|
+      #       query = db[events_table_name].join(aggregates_table_name, id: :aggregate_table_id, aggregate_id: aggregate_id)
+      #       query = query.where &where_proc
+      #       result = query.select(rel, :aggregate_id, :sequence_number, :event_name, :event_data, :timestamp).order(:sequence_number).all
+      #     end
+      #   }
+
+      # end
+      # result
     end
     def get_current_aggregate_from_aggregates_table aggregate_id, aggregate_type, db
       aggregate_type = aggregate_type.to_s
