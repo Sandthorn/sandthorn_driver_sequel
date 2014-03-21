@@ -1,6 +1,8 @@
-# SandthornDriverSequel
+[![Code Climate](https://codeclimate.com/github/Sandthorn/sandthorn_driver_sequel.png)](https://codeclimate.com/github/Sandthorn/sandthorn_driver_sequel)
 
-TODO: Write a gem description
+# Sandthorn Sequel-driver
+
+A SQL database driver for [Sandthorn](https://github.com/Sandthorn/sandthorn), made with [Sequel](http://sequel.jeremyevans.net/).
 
 ## Installation
 
