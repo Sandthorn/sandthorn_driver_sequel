@@ -116,13 +116,10 @@ module SandthornDriverSequel
         return query.order(:sequence_number).all
       end
     end
-    def get_events args = {}
-      classes = args.fetch(:classes, [])
-      after_sequence_number = args.fetch(:after_sequence_number) { raise ArgumentError.new "Must provide a :after_sequence_number-argument. 1 is first sequence_number, so use 0 if starting over." }
-      take = args.fetch(:take, 0)
-      include_events = args.fetch(:include_events, []).collect { |e| e.to_s  }
-      exclude_events = args.fetch(:exclude_events, []).collect { |e| e.to_s  }
-      aggregate_types = classes.collect { |e| e.to_s  }
+    def get_events aggregate_types: [], take: 0, after_sequence_number: 0, include_events: [], exclude_events: []
+      include_events = include_events.map { |e| e.to_s  }
+      exclude_events = exclude_events.map { |e| e.to_s  }
+      aggregate_types = aggregate_types.map { |e| e.to_s  }
       driver.execute do |db|
         if aggregate_types.empty?
           query = db[events_table_name].join(aggregates_table_name, id: :aggregate_table_id)

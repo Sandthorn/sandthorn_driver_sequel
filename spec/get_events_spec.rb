@@ -71,7 +71,7 @@ module SandthornDriverSequel
 				end
 			end
 			context "and getting events of type :new and foo" do
-				let(:events) {event_store.get_events after_sequence_number: 0, classes: ["String", SandthornDriverSequel::EventStore], include_events: [:new, "foo"]}
+				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: ["String", SandthornDriverSequel::EventStore], include_events: [:new, "foo"]}
 				it "should find 3 events" do
 					events.length.should eql 3
 				end
@@ -80,7 +80,7 @@ module SandthornDriverSequel
 				end
 			end
 			context "and getting events for SandthornDriverSequel::EventStore, and String after 0" do
-				let(:events) {event_store.get_events after_sequence_number: 0, classes: [SandthornDriverSequel::EventStore, String]}
+				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: [SandthornDriverSequel::EventStore, String]}
 				it "should find 5 events" do
 					events.length.should eql 5
 				end
@@ -93,7 +93,7 @@ module SandthornDriverSequel
 				end
 			end
 			context "and getting events for SandthornDriverSequel::EventStore after 0" do
-				let(:events) {event_store.get_events after_sequence_number: 0, classes: [SandthornDriverSequel::EventStore]}
+				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: [SandthornDriverSequel::EventStore]}
 				it "should find 3 events" do
 					events.length.should eql 3
 				end
