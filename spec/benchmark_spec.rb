@@ -5,7 +5,7 @@ require 'yaml'
 module Sandthorn
   module AggregateRoot
 
-    describe "benchmark" do
+    describe "benchmark", benchmark: true do
 
       before(:each) { prepare_for_test }
       let(:test_events_20_events) do
