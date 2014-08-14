@@ -4,25 +4,25 @@ module SandthornDriverSequel
 	describe EventStore do
 		before(:each) { prepare_for_test }
 		let(:test_events_a) do
-			e = [] 
+			e = []
 			e << {aggregate_version: 1, event_name: "new", event_data: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
 			e << {aggregate_version: 2, event_name: "foo", event_data: "A2"}
 			e << {aggregate_version: 3, event_name: "bard", event_data: "A3"}
 		end
 		let(:aggregate_id_a) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
 		let(:test_events_b) do
-			e = [] 
+			e = []
 			e << {aggregate_version: 1, event_name: "new", event_data: "B1" }
 			e << {aggregate_version: 2, event_name: "foo", event_data: "B2"}
 			e << {aggregate_version: 3, event_name: "bar", event_data: "B3"}
 		end
 		let(:aggregate_id_b) {"c0456e26-1234-4f67-92fa-130b3a31a39a"}
 		let(:test_events_c) do
-			e = [] 
+			e = []
 			e << {aggregate_version: 1, event_name: "new", event_data: "C1" }
 		end
 		let(:test_events_c_2) do
-			e = [] 
+			e = []
 			e << {aggregate_version: 2, event_name: "flubber", event_data: "C2" }
 		end
 		let(:aggregate_id_c) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
@@ -32,7 +32,7 @@ module SandthornDriverSequel
 			event_store.save_events test_events_b, 0, aggregate_id_b, SandthornDriverSequel::SequelDriver
 			event_store.save_events test_events_c_2, 1, aggregate_id_c, String
 		end
-		context "when using get_events" do 
+		context "when using get_events" do
 			context "and using take" do
 				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new], take: 2}
 				it "should find 2 events" do
@@ -51,8 +51,8 @@ module SandthornDriverSequel
 			context "and combining args" do
 				let(:events) do
 					all = event_store.get_events after_sequence_number: 0
-					first_seq_number = all[0][:sequence_number]				
-					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, :foo, "bar", :flubber], take: 100 
+					first_seq_number = all[0][:sequence_number]
+					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, :foo, "bar", :flubber], take: 100
 				end
 				it "should find 4 events" do
 					events.length.should eql 4
@@ -89,7 +89,7 @@ module SandthornDriverSequel
 					events.each { |e| e[:sequence_number].should be > check; check = e[:sequence_number] }
 				end
 				it "should contain only events for aggregate_id_a and aggregate_id_c" do
-					events.each { |e| [aggregate_id_a, aggregate_id_c].include?(e[:aggregate_id]).should be_true }
+					events.each { |e| [aggregate_id_a, aggregate_id_c].include?(e[:aggregate_id]).should be_truthy }
 				end
 			end
 			context "and getting events for SandthornDriverSequel::EventStore after 0" do
