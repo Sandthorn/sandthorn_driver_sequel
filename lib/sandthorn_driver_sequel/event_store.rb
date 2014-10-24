@@ -10,9 +10,9 @@ module SandthornDriverSequel
       @url = url
     end
 
-    def save_events aggregate_events, originating_aggregate_version, aggregate_id, *class_name
+    def save_events aggregate_events, originating_aggregate_version, aggregate_id, class_name
       current_aggregate_version = originating_aggregate_version
-      aggregate_type = class_name.first.to_s
+      aggregate_type = class_name.to_s
       driver.execute_in_transaction do |db|
         if current_aggregate_version == 0
           to_insert = {aggregate_id: aggregate_id, aggregate_type: aggregate_type, aggregate_version: 0}
