@@ -55,10 +55,6 @@ module SandthornDriverSequel
       end
     end
     def save_snapshot aggregate_snapshot, aggregate_id, class_name
-      #ar_snapshot.event_name = snapshot[:event_name]
-      #ar_snapshot.event_data = snapshot[:event_data]
-      #ar_snapshot.aggregate_version = snapshot[:aggregate_version]
-      #ar_snapshot.aggregate_id = aggregate_id
       driver.execute_in_transaction do |db|
         current_aggregate = get_current_aggregate_from_aggregates_table aggregate_id, class_name, db
         pk_id = current_aggregate[:id]
