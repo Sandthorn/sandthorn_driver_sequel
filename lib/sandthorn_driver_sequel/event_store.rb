@@ -15,10 +15,9 @@ module SandthornDriverSequel
       aggregate_type = class_name.to_s
       driver.execute_in_transaction do |db|
         if current_aggregate_version == 0
-          to_insert = {aggregate_id: aggregate_id, aggregate_type: aggregate_type, aggregate_version: 0}
-          pk_id = db[aggregates_table_name].insert(to_insert)
+          pk_id = register_new_aggregate(aggregate_id, aggregate_type, db)
         else
-          current_aggregate = get_current_aggregate_from_aggregates_table aggregate_id, aggregate_type, db
+          current_aggregate = get_current_aggregate_from_aggregates_table(aggregate_id, aggregate_type, db)
           check_initial_aggregate_version!(current_aggregate, current_aggregate_version)
           pk_id = current_aggregate[:id]
         end
@@ -54,6 +53,16 @@ module SandthornDriverSequel
         raise SandthornDriverSequel::Errors::WrongAggregateVersionError, aggregate, current_aggregate_version
       end
     end
+
+    def register_new_aggregate(aggregate_id, aggregate_type, db)
+      to_insert = {
+          aggregate_id: aggregate_id,
+          aggregate_type: aggregate_type,
+          aggregate_version: 0
+      }
+      pk_id = db[aggregates_table_name].insert(to_insert)
+    end
+
     def save_snapshot aggregate_snapshot, aggregate_id, class_name
       driver.execute_in_transaction do |db|
         current_aggregate = get_current_aggregate_from_aggregates_table aggregate_id, class_name, db
