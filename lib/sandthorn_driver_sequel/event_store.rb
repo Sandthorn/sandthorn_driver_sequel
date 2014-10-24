@@ -19,26 +19,41 @@ module SandthornDriverSequel
           pk_id = db[aggregates_table_name].insert(to_insert)
         else
           current_aggregate = get_current_aggregate_from_aggregates_table aggregate_id, aggregate_type, db
+          check_initial_aggregate_version!(current_aggregate, current_aggregate_version)
           pk_id = current_aggregate[:id]
-          if current_aggregate[:aggregate_version] != current_aggregate_version
-            error_message = "#{aggregate_type} with id #{aggregate_id} should be att version #{current_aggregate_version} but was #{current_aggregate[:aggregate_version]} in the event store."
-            raise SandthornDriverSequel::Errors::WrongAggregateVersionError.new(error_message)
-          end
         end
         timestamp = Time.now.utc
         aggregate_events.each do |event|
           current_aggregate_version += 1
-          if current_aggregate_version != event[:aggregate_version]
-            error_message = "#{aggregate_type} with id #{aggregate_id}: expected event with version #{current_aggregate_version}, but got #{event[:aggregate_version]}"
-            raise SandthornDriverSequel::Errors::ConcurrencyError.new(error_message)
-          end
-          to_insert = ({aggregate_table_id: pk_id, aggregate_version: event[:aggregate_version], event_name: event[:event_name], event_data: event[:event_data], timestamp: timestamp})
-          db[events_table_name].insert(to_insert)
+          check_event_aggregate_version!(event, class_name, current_aggregate_version)
+          insert_event(db, event, pk_id, timestamp)
         end
         db[aggregates_table_name].where(id: pk_id).update(aggregate_version: current_aggregate_version)
       end
     end
 
+    def insert_event(db, event, pk_id, timestamp)
+      to_insert = {
+          aggregate_table_id: pk_id,
+          aggregate_version: event[:aggregate_version],
+          event_name: event[:event_name],
+          event_data: event[:event_data],
+          timestamp: timestamp
+      }
+      db[events_table_name].insert(to_insert)
+    end
+
+    def check_event_aggregate_version!(event, aggregate_type, current_aggregate_version)
+      if event[:aggregate_version] != current_aggregate_version
+        raise SandthornDriverSequel::Errors::ConcurrencyError, event, aggregate_type, current_aggregate_version
+      end
+    end
+
+    def check_initial_aggregate_version!(aggregate, current_aggregate_version)
+      if aggregate[:aggregate_version] != current_aggregate_version
+        raise SandthornDriverSequel::Errors::WrongAggregateVersionError, aggregate, current_aggregate_version
+      end
+    end
     def save_snapshot aggregate_snapshot, aggregate_id, class_name
       #ar_snapshot.event_name = snapshot[:event_name]
       #ar_snapshot.event_data = snapshot[:event_data]
@@ -49,11 +64,8 @@ module SandthornDriverSequel
         pk_id = current_aggregate[:id]
         current_snapshot = get_current_snapshot pk_id, db
         aggregate_version = aggregate_snapshot[:aggregate_version]
-        return if !current_snapshot.nil? && current_snapshot[:aggregate_version] == aggregate_version
-        if current_aggregate[:aggregate_version] < aggregate_version
-          error_message = "#{class_name} with id #{aggregate_id}: tried to save snapshot with version #{aggregate_version}, but current version is at #{current_aggregate[:aggregate_version]}"
-          raise SandthornDriverSequel::Errors::WrongAggregateVersionError.new error_message
-        end
+        return if snapshot_fresh?(current_snapshot, aggregate_version)
+        check_snapshot_version!(current_aggregate, aggregate_version)
         if current_snapshot.nil?
           to_insert = {aggregate_version: aggregate_version, snapshot_data: aggregate_snapshot[:event_data], aggregate_table_id: pk_id }
           db[snapshots_table_name].insert(to_insert)
@@ -61,6 +73,16 @@ module SandthornDriverSequel
           to_update = {aggregate_version: aggregate_version, snapshot_data: aggregate_snapshot[:event_data] }
           db[snapshots_table_name].where(aggregate_table_id: pk_id).update(to_update)
         end
+      end
+    end
+
+    def snapshot_fresh?(current_snapshot, aggregate_version)
+      !current_snapshot.nil? && current_snapshot[:aggregate_version] == aggregate_version
+    end
+
+    def check_snapshot_version!(aggregate, aggregate_version)
+      if aggregate[:aggregate_version] < aggregate_version
+        raise SandthornDriverSequel::Errors::WrongSnapshotVersionError, aggregate, version
       end
     end
 
