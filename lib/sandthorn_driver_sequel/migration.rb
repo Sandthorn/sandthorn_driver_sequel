@@ -39,7 +39,7 @@ module SandthornDriverSequel
       end
       aggr_migration_1 = "#{aggregates_table_name}-20141024"
       unless has_been_migrated?(aggr_migration_1)
-        driver.execute_in_transaction do |db|
+        driver.execute do |db|
           db.alter_table(aggregates_table_name) do
             set_column_default :aggregate_version, 0
           end
