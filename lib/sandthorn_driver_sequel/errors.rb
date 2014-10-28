@@ -1,17 +1,16 @@
 module SandthornDriverSequel::Errors
   class Error < StandardError; end
   class ConcurrencyError < Error
-    attr_reader :event, :aggregate_type, :version
-    def initialize(event, aggregate_type, version)
+    attr_reader :event, :aggregate
+    def initialize(event, aggregate)
       @event = event
-      @aggregate_type = aggregate_type
-      @version = version
+      @aggregate = aggregate
       super(create_message)
     end
 
     def create_message
-      "#{event[:aggregate_type]} with id #{event[:aggregate_id]}: " +
-      "expected event with version #{version}, but got #{event[:aggregate_version]}"
+      "#{aggregate.aggregate_type} with id #{aggregate.aggregate_id}: " +
+      "expected event with version #{aggregate.aggregate_version}, but got #{event.aggregate_version}"
     end
   end
   class InternalError < Error; end
