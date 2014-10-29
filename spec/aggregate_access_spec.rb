@@ -5,9 +5,11 @@ module SandthornDriverSequel
     include EventStoreContext
     let(:context) { :test }
     let(:db) { Sequel.connect(event_store_url)}
-    let(:aggregate_id) { SecureRandom.uuid }
+    let(:aggregate_id) { generate_uuid }
     let(:storage) { Storage.new(db, :test) }
     let(:access) { AggregateAccess.new(storage) }
+
+    before { prepare_for_test }
 
     describe "#find" do
       it "finds by table id" do
@@ -18,6 +20,7 @@ module SandthornDriverSequel
       end
 
       it "doesn't find by table id" do
+        access.register_aggregate(aggregate_id, "foo")
         max_id = db[aggregates_table_name].max(:id)
         expect(access.find(max_id + 1)).to be_nil
       end
@@ -57,6 +60,38 @@ module SandthornDriverSequel
         expect(aggregate.aggregate_type).to eq("bar")
         expect(aggregate.id).to_not be_nil
       end
+    end
+
+    describe "#aggregate_types" do
+      it "returns all aggregate types in the event store" do
+        types = ["foo", "bar", "qux"]
+        types.each do |type|
+          access.register_aggregate(generate_uuid, type)
+        end
+        expect(access.aggregate_types).to eq(types.sort)
+      end
+    end
+
+    describe "#aggregate_ids" do
+      context "when given no argument" do
+        it "returns all aggregate ids" do
+          aggregate_ids = 3.times.map { generate_uuid }
+          aggregate_ids.each { |id| access.register_aggregate(id, "foo") }
+          expect(access.aggregate_ids).to eq(aggregate_ids)
+        end
+      end
+      context "when given an aggregate type" do
+        it "returns only aggregates of that type" do
+          foo_agg_id, bar_agg_id = generate_uuid, generate_uuid
+          access.register_aggregate(foo_agg_id, "foo")
+          access.register_aggregate(bar_agg_id, "bar")
+          expect(access.aggregate_ids(type: "foo")).to eq([foo_agg_id])
+        end        
+      end
+    end
+
+    def generate_uuid
+      SecureRandom.uuid
     end
   end
 end

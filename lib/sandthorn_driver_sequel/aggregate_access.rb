@@ -22,8 +22,16 @@ module SandthornDriverSequel
       storage.aggregates.first(aggregate_id: aggregate_id)
     end
 
-    def type_names
+    def aggregate_types
       storage.aggregates.select(:aggregate_type).distinct.select_map(:aggregate_type)
+    end
+
+    def aggregate_ids(type: nil)
+      aggs = storage.aggregates
+      if type
+        aggs = aggs.where(aggregate_type: type)
+      end
+      aggs.order(:id).select_map(:aggregate_id)
     end
 
   end

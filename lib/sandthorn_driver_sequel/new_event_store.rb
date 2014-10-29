@@ -18,11 +18,16 @@ class NewEventStore
   def get_aggregate aggregate_id, *class_name
 
   end
-  def get_aggregate_list_by_typename class_name; end
-  def get_all_typenames
+  def get_aggregate_ids(type: nil)
     driver.execute do |db|
       access = get_aggregate_access(db)
-      access.typenames
+      access.aggregate_ids(type: type)
+    end
+  end
+  def get_all_types
+    driver.execute do |db|
+      access = get_aggregate_access(db)
+      access.aggregate_types
     end
   end
   def get_snapshot aggregate_id, *class_name; end
