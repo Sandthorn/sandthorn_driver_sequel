@@ -30,6 +30,8 @@ module SandthornDriverSequel
       if version != event[:aggregate_version]
         raise Errors::ConcurrencyError.new(event, aggregate)
       end
+    rescue TypeError
+      raise Errors::EventFormatError, "Event has wrong format: #{event.inspect}"
     end
 
     def store_event(aggregate, timestamp, event)
