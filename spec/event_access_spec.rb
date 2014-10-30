@@ -11,6 +11,7 @@ module SandthornDriverSequel
     end
     let(:storage) { Storage.new(db, :test) }
     let(:aggregate_access) { AggregateAccess.new(storage) }
+    let(:snapshot_access) { SnapshotAccess.new(storage)}
     let(:access) { EventAccess.new(storage) }
 
     let(:events) do
@@ -28,6 +29,13 @@ module SandthornDriverSequel
     end
 
     describe "#store_events" do
+
+      it "handles both arrays and single events" do
+        access.store_events(aggregate, events[0])
+        events = access.find_events_by_aggregate_id(aggregate_id)
+        expect(events.length).to eq(1)
+      end
+
       it "adds timestamps to all events and associates them to the aggregate" do
         access.store_events(aggregate, events)
         events = access.find_events_by_aggregate_id(aggregate_id)
@@ -38,6 +46,7 @@ module SandthornDriverSequel
         access.store_events(aggregate, events)
         events = access.find_events_by_aggregate_id(aggregate_id)
         version = events.map(&:aggregate_version).max
+        
         reloaded_aggregate = aggregate_access.find(aggregate.id)
         expect(reloaded_aggregate.aggregate_version).to eq(version)
       end
@@ -54,10 +63,26 @@ module SandthornDriverSequel
       context "when there are events" do
         it "returns correct events" do
           access.store_events(aggregate, events)
+
           stored_events = access.find_events_by_aggregate_id(aggregate.aggregate_id)
           expect(stored_events.map(&:aggregate_table_id)).to all(eq(aggregate.id))
           expect(stored_events.size).to eq(events.size)
         end
+      end
+    end
+
+    describe "#after_snapshot" do
+      it "returns events after the given snapshot" do
+        access.store_events(aggregate, events.first)
+
+        snapshot_id = snapshot_access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 1, event_data: "foo"})
+        snapshot = snapshot_access.find(snapshot_id)
+
+        access.store_events(aggregate, events.last)
+
+        events = access.after_snapshot(snapshot)
+        expect(events.count).to eq(1)
+        expect(events.first[:event_data]).to eq("foo_data")
       end
     end
 

@@ -1,7 +1,8 @@
 module SandthornDriverSequel
   class EventAccess < Access
-
+    using Refinements::Array
     def store_events(aggregate, events)
+      events = Array.wrap(events)
       timestamp = Time.now.utc
       events.each do |event|
         store_event(aggregate, timestamp, event)
@@ -11,6 +12,15 @@ module SandthornDriverSequel
 
     def find_events_by_aggregate_id(aggregate_id)
       storage.events.join(storage.aggregates, id: :aggregate_table_id).where(aggregate_id: aggregate_id).all
+    end
+
+    # Returns events from the most recent snapshot
+    def after_snapshot(snapshot)
+      _aggregate_version = snapshot.aggregate_version
+      aggregate_table_id = snapshot.aggregate_table_id
+      storage.events
+        .where(aggregate_table_id: aggregate_table_id)
+        .where { aggregate_version > _aggregate_version }
     end
 
     private
