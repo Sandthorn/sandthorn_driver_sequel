@@ -1,5 +1,6 @@
 require "sandthorn_driver_sequel/version"
 require "sandthorn_driver_sequel/refinements"
+require "sandthorn_driver_sequel/event_query"
 require "sandthorn_driver_sequel/event_store_context"
 require "sandthorn_driver_sequel/event"
 require "sandthorn_driver_sequel/access"

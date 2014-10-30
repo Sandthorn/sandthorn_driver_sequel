@@ -18,6 +18,20 @@ module SandthornDriverSequel
       end
     end
 
+    def obsolete(aggregate_types: [], max_event_distance: 100)
+      aggregate_types.map!(&:to_s)
+      snapshot_version = Sequel.qualify(storage.snapshots_table_name, :aggregate_version)
+      aggregate_version = Sequel.qualify(storage.aggregates_table_name, :aggregate_version)
+      query = storage.aggregates.left_outer_join(storage.snapshots, aggregate_table_id: :id)
+      query = query.select { (aggregate_version - snapshot_version).as(distance) }
+      query = query.select_append(:aggregate_id, :aggregate_type)
+      query = query.where { (aggregate_version - coalesce(snapshot_version, 0)) > max_event_distance }
+      if aggregate_types.any?
+        query = query.where(aggregate_type: aggregate_types)
+      end
+      query.all
+    end
+
     private
 
     def aggregates
