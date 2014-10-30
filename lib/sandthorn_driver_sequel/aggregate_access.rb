@@ -22,6 +22,12 @@ module SandthornDriverSequel
       storage.aggregates.first(aggregate_id: aggregate_id)
     end
 
+    def find_by_aggregate_id!(aggregate_id)
+      aggregate = find_by_aggregate_id(aggregate_id)
+      raise Errors::NoAggregateError, aggregate_id unless aggregate
+      aggregate
+    end
+
     def aggregate_types
       storage.aggregates.select(:aggregate_type).distinct.select_map(:aggregate_type)
     end
