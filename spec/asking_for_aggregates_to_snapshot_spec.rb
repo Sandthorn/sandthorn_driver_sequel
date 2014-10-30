@@ -14,7 +14,7 @@ module SandthornDriverSequel
 			before(:each) {save_test_events}
 
 			context "when asking for type 'Bar' and max event count 5" do
-				let(:needs_snapshot) { event_store.obsolete_snapshots class_names: [Bar], max_event_distance: 5 }
+				let(:needs_snapshot) { event_store.obsolete_snapshots aggregate_types: [Bar], max_event_distance: 5 }
 				context "and no snapshots exist" do
 					it "should return that id 2 with class Bar need to be snapshotted" do
 						expect(needs_snapshot.length).to eql 1
@@ -23,8 +23,11 @@ module SandthornDriverSequel
 					end
 				end
 				context "and a recent snapshot exists" do
-					before(:each) { event_store.save_snapshot({ event_data: "YO MAN", aggregate_version: 11 }, aggregates[1][:id], aggregates[1][:class_name])}
-					it "should return empty array" do
+					before(:each) do
+            snapshot_data = { event_data: "YO MAN", aggregate_version: 11 }
+            event_store.save_snapshot(snapshot_data, aggregates[1][:id])
+          end
+					it "should return nil" do
 						expect(needs_snapshot).to be_empty
 					end
 				end
@@ -44,7 +47,7 @@ module SandthornDriverSequel
 				save_events for_2_2, 1
 			end
 			def save_events events, aggregate_index
-				event_store.save_events events, events.first[:aggregate_version]-1, aggregates[aggregate_index][:id], aggregates[aggregate_index][:class_name]
+				event_store.save_events events, aggregates[aggregate_index][:id], aggregates[aggregate_index][:class_name]
 			end
 
 			def event_generator count: 1, start_at: 1

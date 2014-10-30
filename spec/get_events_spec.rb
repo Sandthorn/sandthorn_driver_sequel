@@ -27,10 +27,10 @@ module SandthornDriverSequel
 		end
 		let(:aggregate_id_c) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
 		before(:each) do
-			event_store.save_events test_events_a, 0, aggregate_id_a, SandthornDriverSequel::EventStore
-			event_store.save_events test_events_c, 0, aggregate_id_c, String
-			event_store.save_events test_events_b, 0, aggregate_id_b, SandthornDriverSequel::SequelDriver
-			event_store.save_events test_events_c_2, 1, aggregate_id_c, String
+			event_store.save_events test_events_a, aggregate_id_a, SandthornDriverSequel::EventStore
+			event_store.save_events test_events_c, aggregate_id_c, String
+			event_store.save_events test_events_b, aggregate_id_b, SandthornDriverSequel::SequelDriver
+			event_store.save_events test_events_c_2, aggregate_id_c, String
 		end
 		context "when using get_events" do
 			context "and using take" do
