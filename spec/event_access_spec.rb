@@ -51,6 +51,13 @@ module SandthornDriverSequel
         expect(reloaded_aggregate.aggregate_version).to eq(version)
       end
 
+      context "when saving events for non-existing aggregate" do
+        it "raises an error" do
+          aggregate = Struct.new(:id, :aggregate_version).new(1000, 0)
+          expect { access.store_events(aggregate, events) }.to raise_error(Errors::NoAggregateError)
+        end
+      end
+
       context "when the aggregate version of an event is incorrect" do
         it "throws an error" do
           event = { aggregate_version: 100 }
