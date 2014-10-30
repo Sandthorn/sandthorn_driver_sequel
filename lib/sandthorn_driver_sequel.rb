@@ -8,6 +8,7 @@ require "sandthorn_driver_sequel/event_access"
 require "sandthorn_driver_sequel/snapshot_access"
 require "sandthorn_driver_sequel/storage"
 require 'sandthorn_driver_sequel/event_store'
+require 'sandthorn_driver_sequel/new_event_store'
 require 'sandthorn_driver_sequel/errors'
 require 'sandthorn_driver_sequel/migration'
 
