@@ -46,7 +46,7 @@ module SandthornDriverSequel
         access.store_events(aggregate, events)
         events = access.find_events_by_aggregate_id(aggregate_id)
         version = events.map(&:aggregate_version).max
-        
+
         reloaded_aggregate = aggregate_access.find(aggregate.id)
         expect(reloaded_aggregate.aggregate_version).to eq(version)
       end
