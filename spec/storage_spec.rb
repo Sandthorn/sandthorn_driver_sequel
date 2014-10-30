@@ -11,12 +11,6 @@ module SandthornDriverSequel
     let(:driver) { SequelDriver.new(event_store_url)}
     let(:storage) { Storage.new(db, context) }
 
-    describe "#aggregates" do
-      it "returns access to the aggregates dataset" do
-        expect(storage.aggregates).to respond_to(:update)
-      end
-    end
-
     describe "anonymous aggegrate class" do
       it "can insert and read data" do
         create_aggregate
@@ -28,13 +22,7 @@ module SandthornDriverSequel
         create_aggregate
         storage.aggregates.where(aggregate_id: "foo").update(aggregate_version: 2)
         aggregate = storage.aggregates.first(aggregate_id: "foo")
-        expect(aggregate.aggregate_version).to eq(1)
-      end
-    end
-
-    describe "#events" do
-      it "returns access to the events dataset" do
-        expect(storage.events).to respond_to(:update)
+        expect(aggregate.aggregate_version).to eq(2)
       end
     end
 
