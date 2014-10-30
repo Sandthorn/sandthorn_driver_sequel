@@ -1,5 +1,5 @@
 module SandthornDriverSequel
-  class EventAccess < Access
+  class EventAccess < Access::Base
     using Refinements::Array
     def store_events(aggregate, events)
       events = Array.wrap(events)

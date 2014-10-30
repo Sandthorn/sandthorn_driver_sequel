@@ -3,9 +3,6 @@ require "sandthorn_driver_sequel/refinements"
 require "sandthorn_driver_sequel/event_store_context"
 require "sandthorn_driver_sequel/event"
 require "sandthorn_driver_sequel/access"
-require "sandthorn_driver_sequel/aggregate_access"
-require "sandthorn_driver_sequel/event_access"
-require "sandthorn_driver_sequel/snapshot_access"
 require "sandthorn_driver_sequel/storage"
 require 'sandthorn_driver_sequel/event_store'
 require 'sandthorn_driver_sequel/new_event_store'

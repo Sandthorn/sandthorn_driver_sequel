@@ -1,5 +1,5 @@
 module SandthornDriverSequel
-  class SnapshotAccess < Access
+  class SnapshotAccess < Access::Base
 
     def find_by_aggregate_id(aggregate_id)
       aggregate = aggregates.find_by_aggregate_id(aggregate_id)

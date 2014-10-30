@@ -1,5 +1,5 @@
 module SandthornDriverSequel
-  class AggregateAccess < Access
+  class AggregateAccess < Access::Base
 
     def find_or_register(aggregate_id, aggregate_type)
       if aggregate = find_by_aggregate_id(aggregate_id)
