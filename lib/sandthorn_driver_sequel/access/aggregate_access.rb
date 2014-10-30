@@ -35,7 +35,7 @@ module SandthornDriverSequel
     def aggregate_ids(type: nil)
       aggs = storage.aggregates
       if type
-        aggs = aggs.where(aggregate_type: type)
+        aggs = aggs.where(aggregate_type: type.to_s)
       end
       aggs.order(:id).select_map(:aggregate_id)
     end
