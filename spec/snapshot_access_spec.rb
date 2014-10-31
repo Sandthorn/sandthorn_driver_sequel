@@ -3,6 +3,11 @@ require 'spec_helper'
 module SandthornDriverSequel
   describe SnapshotAccess do
     include EventStoreContext
+
+    before do
+      prepare_for_test
+    end
+
     let(:context) { :test }
     let(:db) { Sequel.connect(event_store_url)}
     let(:aggregate_id) { generate_uuid }
