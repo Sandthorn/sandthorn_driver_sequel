@@ -3,6 +3,7 @@ require 'spec_helper'
 module SandthornDriverSequel
   describe EventAccess do
     include EventStoreContext
+
     let(:context) { :test }
     let(:db) { Sequel.connect(event_store_url)}
     let(:aggregate_id) { SecureRandom.uuid }
@@ -39,7 +40,7 @@ module SandthornDriverSequel
       it "adds timestamps to all events and associates them to the aggregate" do
         access.store_events(aggregate, events)
         events = access.find_events_by_aggregate_id(aggregate_id)
-        expect(events.map(&:timestamp).map(&:nil?).any?).to be_falsey
+        expect(events.map(&:timestamp).all?).to be_truthy
       end
 
       it "updates the aggregate version" do
@@ -49,13 +50,6 @@ module SandthornDriverSequel
 
         reloaded_aggregate = aggregate_access.find(aggregate.id)
         expect(reloaded_aggregate.aggregate_version).to eq(version)
-      end
-
-      context "when saving events for non-existing aggregate" do
-        it "raises an error" do
-          aggregate = Struct.new(:id, :aggregate_version).new(1000, 0)
-          expect { access.store_events(aggregate, events) }.to raise_error(Errors::NoAggregateError)
-        end
       end
 
       context "when the aggregate version of an event is incorrect" do

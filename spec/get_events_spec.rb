@@ -52,7 +52,7 @@ module SandthornDriverSequel
 				let(:events) do
 					all = event_store.get_events after_sequence_number: 0
 					first_seq_number = all[0][:sequence_number]
-					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, :foo, "bar", :flubber], take: 100
+					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, "bar", :flubber], take: 100
 				end
 				it "should find 4 events" do
 					events.length.should eql 4
