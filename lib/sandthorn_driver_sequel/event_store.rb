@@ -51,7 +51,7 @@ module SandthornDriverSequel
     end
 
     def get_aggregate aggregate_id, *class_name
-      warn("This method is deprecated. Use :get_aggregate_events_from_snapshot")
+      warn(":get_aggregate is deprecated. Use :get_aggregate_events_from_snapshot")
       get_aggregate_events_from_snapshot(aggregate_id)
     end
 
@@ -77,13 +77,6 @@ module SandthornDriverSequel
       end
     end
 
-    def transform_snapshot(snapshot)
-      {
-        aggregate_version: snapshot.aggregate_version,
-        event_data: snapshot.snapshot_data
-      }
-    end
-
     def get_events(*args)
       driver.execute do |db|
         event_access = get_event_access(db)
@@ -105,6 +98,13 @@ module SandthornDriverSequel
 
     private
 
+    def transform_snapshot(snapshot)
+      {
+          aggregate_version: snapshot.aggregate_version,
+          event_data: snapshot.snapshot_data
+      }
+    end
+
     def get_aggregate_access(db)
       AggregateAccess.new(storage(db))
     end
@@ -118,9 +118,8 @@ module SandthornDriverSequel
     end
 
     def storage(db)
-      storage = Storage.new(db, context)
+      Storage.new(db, context)
     end
-
 
   end
 end
