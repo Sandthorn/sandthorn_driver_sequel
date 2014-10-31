@@ -29,6 +29,10 @@ module SandthornDriverSequel
       @query.all
     end
 
+    private
+
+    attr_reader :storage
+
     def add_limit(query, take)
       if take > 0
         query.limit(take)
@@ -81,8 +85,6 @@ module SandthornDriverSequel
         query.join(storage.aggregates, id: :aggregate_table_id)
       end
     end
-
-    attr_reader :storage
 
   end
 end

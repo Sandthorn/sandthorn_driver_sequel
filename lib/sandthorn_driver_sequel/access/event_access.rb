@@ -1,5 +1,8 @@
 module SandthornDriverSequel
   class EventAccess < Access::Base
+    # = EventAccess
+    # Reads and writes events.
+
     using Refinements::Array
 
     def store_events(aggregate, events)
@@ -27,7 +30,7 @@ module SandthornDriverSequel
         .all
     end
 
-    # Returns events from the most recent snapshot
+    # Returns events that occurred after the given snapshot
     def after_snapshot(snapshot)
       _aggregate_version = snapshot.aggregate_version
       aggregate_table_id = snapshot.aggregate_table_id
@@ -64,7 +67,7 @@ module SandthornDriverSequel
     end
 
     def store_event(aggregate, timestamp, event)
-      event = Event.new(event)
+      event = EventWrapper.new(event)
       aggregate.aggregate_version += 1
       check_versions!(aggregate, event)
       data = build_event_data(aggregate, timestamp, event)

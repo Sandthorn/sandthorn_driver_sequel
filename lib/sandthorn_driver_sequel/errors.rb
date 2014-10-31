@@ -1,5 +1,7 @@
 module SandthornDriverSequel::Errors
   Error = Class.new(StandardError)
+  InternalError = Class.new(Error)
+  NoAggregateError = Class.new(Error)
 
   class ConcurrencyError < Error
     attr_reader :event, :aggregate
@@ -14,9 +16,6 @@ module SandthornDriverSequel::Errors
       "expected event with version #{aggregate.aggregate_version}, but got #{event.aggregate_version}"
     end
   end
-
-  InternalError = Class.new(Error)
-  NoAggregateError = Class.new(Error)
 
   class WrongAggregateVersionError < Error;
     def initialize(aggregate, version)

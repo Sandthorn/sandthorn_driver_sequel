@@ -1,5 +1,11 @@
 module SandthornDriverSequel
   class Storage
+    # = Storage
+    # Abstracts access to contextualized database tables.
+    #
+    # == Rationale
+    # Provide object-oriented access to the different tables to other objects.
+    # Make it unnecessary for them to know about the current context.
     include EventStoreContext
 
     attr_reader :db
@@ -9,14 +15,17 @@ module SandthornDriverSequel
       @context = context
     end
 
+    # Returns a Sequel::Model for accessing aggregates
     def aggregates
       Class.new(Sequel::Model(aggregates_table))
     end
 
+    # Returns a Sequel::Model for accessing events
     def events
       Class.new(Sequel::Model(events_table))
     end
 
+    # Returns a Sequel::Model for accessing snapshots
     def snapshots
       Class.new(Sequel::Model(snapshots_table))
     end
