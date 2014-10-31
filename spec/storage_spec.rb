@@ -30,7 +30,11 @@ module SandthornDriverSequel
       it "can insert and read data" do
         data, event_id = create_event
         event = storage.events.first(sequence_number: event_id).values
-        expect(event).to eq(data.merge(sequence_number: event_id))
+        expected = data.merge(sequence_number: event_id)
+        expected_time = expected.delete(:timestamp)
+        actual_time = event.delete(:timestamp)
+        expect(event).to eq(expected)
+        expect(actual_time.to_i).to eq(actual_time.to_i)
       end
 
       it "can update data" do
