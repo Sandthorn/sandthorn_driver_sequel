@@ -24,7 +24,7 @@ module SandthornDriverSequel
 				end
 				context "and a recent snapshot exists" do
 					before(:each) do
-            snapshot_data = { event_data: "YO MAN", aggregate_version: 11 }
+            snapshot_data = { snapshot_data: "YO MAN", aggregate_version: 11 }
             event_store.save_snapshot(snapshot_data, aggregates[1][:id])
           end
 					it "should return nil" do

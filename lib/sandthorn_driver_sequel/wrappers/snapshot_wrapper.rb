@@ -5,7 +5,7 @@ module SandthornDriverSequel
     end
 
     def data
-      self[:event_data]
+      self[:snapshot_data]
     end
   end
 end
