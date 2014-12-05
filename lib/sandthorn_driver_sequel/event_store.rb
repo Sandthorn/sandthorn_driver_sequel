@@ -64,6 +64,11 @@ module SandthornDriverSequel
       end
     end
 
+    def get_aggregate_list_by_typename(type)
+      warn(":get_aggregate_list_by_typenames is deprecated. Use :get_aggregate_ids")
+      get_aggregate_ids(type: type)
+    end
+
     def get_all_types
       driver.execute do |db|
         access = get_aggregate_access(db)
