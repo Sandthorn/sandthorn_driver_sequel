@@ -32,6 +32,13 @@ module SandthornDriverSequel
 			event_store.save_events test_events_b, aggregate_id_b, SandthornDriverSequel::SequelDriver
 			event_store.save_events test_events_c_2, aggregate_id_c, String
 		end
+
+		let(:event) { event_store.get_events(take: 1).first }
+
+		it "returns events that can be merged" do
+			expect(event).to respond_to(:merge)
+		end
+
 		context "when using get_events" do
 			context "and using take" do
 				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new], take: 2}
