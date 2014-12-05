@@ -1,7 +1,6 @@
 module SandthornDriverSequel
   class EventStore
     include EventStoreContext
-    using Refinements::Array
 
     attr_reader :driver, :context, :url
 
@@ -89,7 +88,7 @@ module SandthornDriverSequel
 
     def get_new_events_after_event_id_matching_classname event_id, class_name, take: 0
       warn("get_new_events_after_event_id_matching_classname is deprecated")
-      get_events(after_sequence_number: event_id, aggregate_types: Array.wrap(class_name), take: take)
+      get_events(after_sequence_number: event_id, aggregate_types: Utilities.array_wrap(class_name), take: take)
     end
 
     def obsolete_snapshots(*args)

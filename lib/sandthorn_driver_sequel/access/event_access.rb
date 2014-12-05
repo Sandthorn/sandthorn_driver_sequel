@@ -3,10 +3,8 @@ module SandthornDriverSequel
     # = EventAccess
     # Reads and writes events.
 
-    using Refinements::Array
-
     def store_events(aggregate, events)
-      events = Array.wrap(events)
+      events = Utilities.array_wrap(events)
       timestamp = Time.now.utc
       events.each do |event|
         store_event(aggregate, timestamp, event)
