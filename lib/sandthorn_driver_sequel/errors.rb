@@ -2,6 +2,7 @@ module SandthornDriverSequel::Errors
   Error = Class.new(StandardError)
   InternalError = Class.new(Error)
   NoAggregateError = Class.new(Error)
+  EventFormatError = Class.new(Error)
 
   class ConcurrencyError < Error
     attr_reader :event, :aggregate
