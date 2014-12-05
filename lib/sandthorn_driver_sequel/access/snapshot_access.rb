@@ -46,7 +46,7 @@ module SandthornDriverSequel
 
     def perform_snapshot(aggregate, snapshot, snapshot_data)
       check_snapshot_version!(aggregate, snapshot_data)
-      if snapshot
+      if valid_snapshot?(snapshot)
         update_snapshot(snapshot, snapshot_data)
       else
         insert_snapshot(aggregate, snapshot_data)
@@ -65,6 +65,10 @@ module SandthornDriverSequel
           snapshot_data:      snapshot_data.data,
           aggregate_version:  snapshot_data.aggregate_version
       }
+    end
+
+    def valid_snapshot?(snapshot)
+      snapshot && snapshot[:snapshot_data]
     end
 
     def update_snapshot(snapshot, snapshot_data)
