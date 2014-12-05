@@ -43,13 +43,20 @@ module SandthornDriverSequel
         snapshot = snapshots.find_by_aggregate_id(aggregate_id)
         if snapshot
           events = event_access.after_snapshot(snapshot)
-          snapshot_event = snapshot.values
-          snapshot_event[:event_name] = "aggregate_set_from_snapshot"
+          snapshot_event = build_snapshot_event(snapshot)
           events.unshift(snapshot_event)
         else
           event_access.find_events_by_aggregate_id(aggregate_id)
         end
       end
+    end
+
+    def build_snapshot_event(snapshot)
+      {
+          aggregate_version: snapshot[:aggregate_version],
+          event_data: snapshot[:snapshot_data],
+          event_name: "aggregate_set_from_snapshot"
+      }
     end
 
     def get_aggregate aggregate_id, *class_name
