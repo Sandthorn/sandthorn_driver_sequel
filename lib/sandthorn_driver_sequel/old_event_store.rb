@@ -166,7 +166,7 @@ module SandthornDriverSequel
         return query.order(:sequence_number).all
       end
     end
-    def obsolete_snapshots class_names: [], max_event_distance: 100
+    def obsolete_snapshots aggregate_types: [], max_event_distance: 100
       driver.execute do |db|
         rel = "#{snapshots_table_name}__aggregate_version".to_sym
         aggr_rel = "#{aggregates_table_name}__aggregate_version".to_sym
