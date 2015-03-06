@@ -104,7 +104,6 @@ module SandthornDriverSequel
           String :migration_name, null: false
           index [:migration_name], unique: true
           DateTime :timestamp, :null=>false
-          index [:migration_name], unique: true
         end
       end
     end

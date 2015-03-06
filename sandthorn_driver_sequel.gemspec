@@ -34,6 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "snappy"
   spec.add_development_dependency "guard-rspec"
 
-  spec.add_runtime_dependency     "sequel", "~> 4.15"
+  spec.add_runtime_dependency     "sequel", "~> 4.17"
   spec.add_runtime_dependency     "pg"
 end
