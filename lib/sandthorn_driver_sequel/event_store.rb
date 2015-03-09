@@ -83,11 +83,11 @@ module SandthornDriverSequel
       end
     end
 
-    # @return { snapshot_id: <Integer>, snapshot_data: <String>, * other_data  }
     def get_snapshot aggregate_id
       driver.execute do |db|
         snapshots = get_snapshot_access(db)
         snapshot = snapshots.find_by_aggregate_id(aggregate_id)
+        transform_snapshot(snapshot)
       end
     end
 
@@ -110,6 +110,13 @@ module SandthornDriverSequel
     end
 
     private
+
+    def transform_snapshot(snapshot)
+      {
+          aggregate_version: snapshot.aggregate_version,
+          event_data: snapshot.snapshot_data
+      }
+    end
 
     def get_aggregate_access(db)
       AggregateAccess.new(storage(db))

@@ -7,7 +7,7 @@ module SandthornDriverSequel
 		let(:aggregate_id) { @id ||= UUIDTools::UUID.random_create.to_s }
 		let(:test_events) { [{aggregate_version: 1, event_data: nil, event_name: "new"},{aggregate_version: 2, event_data: nil, event_name: "foo"}] } 
 		let(:additional_events) { [{aggregate_version: 3, event_data: nil, event_name: "klopp"},{aggregate_version: 4, event_data: nil, event_name: "flipp"}] } 
-		let(:snapshot_data) { { snapshot_data: YAML.dump(Object.new), aggregate_version: 2 } }
+		let(:snapshot_data) { { event_data: YAML.dump(Object.new), aggregate_version: 2 } }		
 		let(:save_snapshot) { event_store.save_snapshot snapshot_data, aggregate_id }
 		let(:save_events) { event_store.save_events test_events, aggregate_id, SandthornDriverSequel::EventStore }
 		let(:save_additional_events) { event_store.save_events additional_events, aggregate_id, SandthornDriverSequel::EventStore }
@@ -40,8 +40,7 @@ module SandthornDriverSequel
 				it "should be able to save and get snapshot" do
 					save_snapshot
 					snap = event_store.get_snapshot(aggregate_id)
-					expect(snap[:aggregate_version]).to eq(snapshot_data[:aggregate_version])
-					expect(snap[:snapshot_data]).to eq(snapshot_data[:snapshot_data])
+					snap.should eql snapshot_data
 				end
 			end
 			context "when trying to save a snapshot on a non-existing aggregate" do
@@ -70,9 +69,7 @@ module SandthornDriverSequel
 					data[:aggregate_version] = 1
 					event_store.save_snapshot(data, aggregate_id)
 					snap = event_store.get_snapshot(aggregate_id)
-					expect(snap.keys).to include(*snapshot_data.keys)
-					expect(snap[:aggregate_version]).to eq(snapshot_data[:aggregate_version])
-					expect(snap[:snapshot_data]).to eq(snapshot_data[:snapshot_data])
+					snap.should eql data
 				end
 			end
 		end

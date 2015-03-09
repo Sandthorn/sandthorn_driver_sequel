@@ -33,7 +33,7 @@ module SandthornDriverSequel
     describe "#find_by_aggregate_id" do
       it "returns the correct data" do
         aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
-        access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 0, snapshot_data: "data" })
+        access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 0, event_data: "data" })
         aggregate.update(aggregate_version: 1)
         snapshot = access.find_by_aggregate_id(aggregate.aggregate_id)
         expected = {
@@ -57,7 +57,7 @@ module SandthornDriverSequel
           it "records the snapshot" do
             aggregate_table_id = aggregate_access.register_aggregate(aggregate_id, "foo").id
             expect(access.find_by_aggregate_id(aggregate_id)).to be_nil
-            access.record_snapshot(aggregate_id, { aggregate_version: 0, snapshot_data: "data"})
+            access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "data"})
 
             snapshot = access.find_by_aggregate_id(aggregate_id)
             expect(snapshot).to_not be_nil
@@ -71,9 +71,9 @@ module SandthornDriverSequel
             it "records a new snapshot" do
               aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
               expect(access.find_by_aggregate_id(aggregate_id)).to be_nil
-              access.record_snapshot(aggregate_id, { aggregate_version: 0, snapshot_data: "data"})
+              access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "data"})
               event_access.store_events(aggregate, events)
-              access.record_snapshot(aggregate_id, { aggregate_version: 2, snapshot_data: "other_data"})
+              access.record_snapshot(aggregate_id, { aggregate_version: 2, event_data: "other_data"})
 
               snapshot = access.find_by_aggregate_id(aggregate_id)
               expect(snapshot).to_not be_nil
@@ -95,8 +95,8 @@ module SandthornDriverSequel
           it "doesn't record a snapshot" do
             aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
             expect(access.find_by_aggregate_id(aggregate_id)).to be_nil
-            access.record_snapshot(aggregate_id, { aggregate_version: 0, snapshot_data: "data"})
-            access.record_snapshot(aggregate_id, { aggregate_version: 0, snapshot_data: "new_data"})
+            access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "data"})
+            access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "new_data"})
             snapshot = access.find_by_aggregate_id(aggregate_id)
             expect(snapshot.snapshot_data).to eq("data")
           end
@@ -105,7 +105,7 @@ module SandthornDriverSequel
     end
 
     it "can write and read snapshots" do
-      snapshot_id = access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 0, snapshot_data: "data" })
+      snapshot_id = access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 0, event_data: "data" })
       snapshot = access.find(snapshot_id)
       expect(snapshot).to_not be_nil
       expect(snapshot.snapshot_data).to eq("data")

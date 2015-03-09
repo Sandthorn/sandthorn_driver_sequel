@@ -81,7 +81,7 @@ module SandthornDriverSequel
       it "returns events after the given snapshot" do
         access.store_events(aggregate, events.first)
 
-        snapshot_id = snapshot_access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 1, snapshot_data: "foo"})
+        snapshot_id = snapshot_access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 1, event_data: "foo"})
         snapshot = snapshot_access.find(snapshot_id)
 
         access.store_events(aggregate, events.last)
