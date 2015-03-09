@@ -27,11 +27,18 @@ module SandthornDriverSequel
 		end
 		let(:aggregate_id_c) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
 		before(:each) do
-			event_store.save_events test_events_a, 0, aggregate_id_a, SandthornDriverSequel::EventStore
-			event_store.save_events test_events_c, 0, aggregate_id_c, String
-			event_store.save_events test_events_b, 0, aggregate_id_b, SandthornDriverSequel::SequelDriver
-			event_store.save_events test_events_c_2, 1, aggregate_id_c, String
+			event_store.save_events test_events_a, aggregate_id_a, SandthornDriverSequel::EventStore
+			event_store.save_events test_events_c, aggregate_id_c, String
+			event_store.save_events test_events_b, aggregate_id_b, SandthornDriverSequel::SequelDriver
+			event_store.save_events test_events_c_2, aggregate_id_c, String
 		end
+
+		let(:event) { event_store.get_events(take: 1).first }
+
+		it "returns events that can be merged" do
+			expect(event).to respond_to(:merge)
+		end
+
 		context "when using get_events" do
 			context "and using take" do
 				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new], take: 2}
@@ -52,7 +59,7 @@ module SandthornDriverSequel
 				let(:events) do
 					all = event_store.get_events after_sequence_number: 0
 					first_seq_number = all[0][:sequence_number]
-					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, :foo, "bar", :flubber], take: 100
+					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, "bar", :flubber], take: 100
 				end
 				it "should find 4 events" do
 					events.length.should eql 4
