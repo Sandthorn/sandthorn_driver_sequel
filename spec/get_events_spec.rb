@@ -43,13 +43,13 @@ module SandthornDriverSequel
 			context "and using take" do
 				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new], take: 2}
 				it "should find 2 events" do
-					events.length.should eql 2
+					expect(events.length).to eql 2
 				end
 			end
 			context "and getting events of type :new" do
 				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new]}
 				it "should find 3 events" do
-					events.length.should eql 3
+					expect(events.length).to eql 3
 				end
 				it "should only be new-events" do
 					events.all? { |e| e[:event_name] == "new"  }
@@ -62,7 +62,7 @@ module SandthornDriverSequel
 					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, "bar", :flubber], take: 100
 				end
 				it "should find 4 events" do
-					events.length.should eql 4
+					expect(events.length).to eql 4
 				end
 				it "should not be any foo-events" do
 					events.all? { |e| e[:event_name] != "foo" }
@@ -71,7 +71,7 @@ module SandthornDriverSequel
 			context "and getting all events but excluding new" do
 				let(:events) {event_store.get_events after_sequence_number: 0, exclude_events: [:new] }
 				it "should find 5 events" do
-					events.length.should eql 5
+					expect(events.length).to eql 5
 				end
 				it "should only be new and foo-events" do
 					events.all? { |e| e[:event_name] != "new" }
@@ -80,7 +80,7 @@ module SandthornDriverSequel
 			context "and getting events of type :new and foo" do
 				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: ["String", SandthornDriverSequel::EventStore], include_events: [:new, "foo"]}
 				it "should find 3 events" do
-					events.length.should eql 3
+					expect(events.length).to eql 3
 				end
 				it "should only be new and foo-events" do
 					events.all? { |e| e[:event_name] == "new" || e[:event_name] == "foo" }
@@ -89,27 +89,27 @@ module SandthornDriverSequel
 			context "and getting events for SandthornDriverSequel::EventStore, and String after 0" do
 				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: [SandthornDriverSequel::EventStore, String]}
 				it "should find 5 events" do
-					events.length.should eql 5
+					expect(events.length).to eql 5
 				end
 				it "should be in sequence_number order" do
 					check = 0
-					events.each { |e| e[:sequence_number].should be > check; check = e[:sequence_number] }
+					events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
 				end
 				it "should contain only events for aggregate_id_a and aggregate_id_c" do
-					events.each { |e| [aggregate_id_a, aggregate_id_c].include?(e[:aggregate_id]).should be_truthy }
+					events.each { |e| expect([aggregate_id_a, aggregate_id_c].include?(e[:aggregate_id])).to be_truthy }
 				end
 			end
 			context "and getting events for SandthornDriverSequel::EventStore after 0" do
 				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: [SandthornDriverSequel::EventStore]}
 				it "should find 3 events" do
-					events.length.should eql 3
+					expect(events.length).to eql 3
 				end
 				it "should be in sequence_number order" do
 					check = 0
-					events.each { |e| e[:sequence_number].should be > check; check = e[:sequence_number] }
+					events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
 				end
 				it "should contain only events for aggregate_id_a" do
-					events.each { |e| e[:aggregate_id].should eql aggregate_id_a  }
+					events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
 				end
 			end
 		end
@@ -117,38 +117,38 @@ module SandthornDriverSequel
 			context "and getting events for SandthornDriverSequel::EventStore after 0" do
 				let(:events) {event_store.get_new_events_after_event_id_matching_classname 0, SandthornDriverSequel::EventStore}
 				it "should find 3 events" do
-					events.length.should eql 3
+					expect(events.length).to eql 3
 				end
 				it "should be in sequence_number order" do
 					check = 0
-					events.each { |e| e[:sequence_number].should be > check; check = e[:sequence_number] }
+					events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
 				end
 				it "should contain only events for aggregate_id_a" do
-					events.each { |e| e[:aggregate_id].should eql aggregate_id_a  }
+					events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
 				end
 				it "should be able to get events after a sequence number" do
 					new_from = events[1][:sequence_number]
 					ev = event_store.get_new_events_after_event_id_matching_classname new_from, SandthornDriverSequel::EventStore
-					ev.last[:aggregate_version].should eql 3
-					ev.length.should eql 1
+					expect(ev.last[:aggregate_version]).to eql 3
+					expect(ev.length).to eql 1
 				end
 				it "should be able to limit the number of results" do
 					ev = event_store.get_new_events_after_event_id_matching_classname 0, SandthornDriverSequel::EventStore, take: 2
-					ev.length.should eql 2
-					ev.last[:aggregate_version].should eql 2
+					expect(ev.length).to eql 2
+					expect(ev.last[:aggregate_version]).to eql 2
 				end
 			end
 			context "and getting events for String after 0" do
 				let(:events) {event_store.get_new_events_after_event_id_matching_classname 0, "String"}
 				it "should find 3 events" do
-					events.length.should eql 2
+					expect(events.length).to eql 2
 				end
 				it "should be in sequence_number order" do
 					check = 0
-					events.each { |e| e[:sequence_number].should be > check; check = e[:sequence_number] }
+					events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
 				end
 				it "should contain only events for aggregate_id_c" do
-					events.each { |e| e[:aggregate_id].should eql aggregate_id_c  }
+					events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_c  }
 				end
 			end
 		end

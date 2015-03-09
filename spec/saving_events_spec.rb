@@ -17,19 +17,19 @@ module SandthornDriverSequel
       it "should be able to save and retrieve events on the aggregate" do
 				event_store.save_events test_events, aggregate_id, String
 				events = event_store.get_aggregate_events aggregate_id
-				events.length.should eql test_events.length
+				expect(events.length).to eql test_events.length
 			end
 
 			it "should have correct keys when asking for events" do
 				event_store.save_events test_events, aggregate_id, String
 				events = event_store.get_aggregate aggregate_id, String
 				event = events.first
-				event[:event_data].should eql(test_events.first[:event_data])
-        event[:event_name].should eql("new")
-        event[:aggregate_id].should eql aggregate_id
-        event[:aggregate_version].should eql 1
-        event[:sequence_number].should be_a(Fixnum)
-        event[:timestamp].should be_a(Time)
+				expect(event[:event_data]).to eql(test_events.first[:event_data])
+        expect(event[:event_name]).to eql("new")
+        expect(event[:aggregate_id]).to eql aggregate_id
+        expect(event[:aggregate_version]).to eql 1
+        expect(event[:sequence_number]).to be_a(Fixnum)
+        expect(event[:timestamp]).to be_a(Time)
 			end
     end
 
@@ -56,16 +56,16 @@ module SandthornDriverSequel
 
 			it "both types should exist in get_all_typenames in alphabetical order" do
 				names = event_store.get_all_types
-				names.length.should eql 2
-				names.first.should eql "Hash"
-				names.last.should eql "String"
+				expect(names.length).to eql 2
+				expect(names.first).to eql "Hash"
+				expect(names.last).to eql "String"
       end
 
 			it "should list the aggregate ids when asking for get_aggregate_list_by_typename" do
 				ids = event_store.get_aggregate_ids(aggregate_type: String)
-				ids.length.should eql 2
-				ids.any? { |e| e == aggregate_id_1 }.should be_truthy
-				ids.any? { |e| e == aggregate_id_3 }.should be_truthy
+				expect(ids.length).to eql 2
+				expect(ids.any? { |e| e == aggregate_id_1 }).to be_truthy
+				expect(ids.any? { |e| e == aggregate_id_3 }).to be_truthy
 			end
     end
 

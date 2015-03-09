@@ -40,7 +40,7 @@ module SandthornDriverSequel
 				it "should be able to save and get snapshot" do
 					save_snapshot
 					snap = event_store.get_snapshot(aggregate_id)
-					snap.should eql snapshot_data
+					expect(snap).to eql snapshot_data
 				end
 			end
 			context "when trying to save a snapshot on a non-existing aggregate" do
@@ -69,7 +69,7 @@ module SandthornDriverSequel
 					data[:aggregate_version] = 1
 					event_store.save_snapshot(data, aggregate_id)
 					snap = event_store.get_snapshot(aggregate_id)
-					snap.should eql data
+					expect(snap).to eql data
 				end
 			end
 		end
