@@ -37,11 +37,11 @@ module SandthornDriverSequel
     end
 
     # Returns aggregate ids.
-    # @param type, optional,
-    def aggregate_ids(type: nil)
+    # @param aggregate_type, optional,
+    def aggregate_ids(aggregate_type: nil)
       aggs = storage.aggregates
-      if type
-        aggs = aggs.where(aggregate_type: type.to_s)
+      if aggregate_type
+        aggs = aggs.where(aggregate_type: aggregate_type.to_s)
       end
       aggs.order(:id).select_map(:aggregate_id)
     end

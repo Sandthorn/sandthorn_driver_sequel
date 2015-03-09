@@ -85,7 +85,7 @@ module SandthornDriverSequel
           foo_agg_id, bar_agg_id = generate_uuid, generate_uuid
           access.register_aggregate(foo_agg_id, "foo")
           access.register_aggregate(bar_agg_id, "bar")
-          expect(access.aggregate_ids(type: "foo")).to eq([foo_agg_id])
+          expect(access.aggregate_ids(aggregate_type: "foo")).to eq([foo_agg_id])
         end        
       end
     end

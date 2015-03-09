@@ -62,7 +62,7 @@ module SandthornDriverSequel
       end
 
 			it "should list the aggregate ids when asking for get_aggregate_list_by_typename" do
-				ids = event_store.get_aggregate_ids(type: String)
+				ids = event_store.get_aggregate_ids(aggregate_type: String)
 				ids.length.should eql 2
 				ids.any? { |e| e == aggregate_id_1 }.should be_truthy
 				ids.any? { |e| e == aggregate_id_3 }.should be_truthy
