@@ -6,10 +6,10 @@ require 'sandthorn_driver_sequel/version'
 Gem::Specification.new do |spec|
   spec.name          = "sandthorn_driver_sequel"
   spec.version       = SandthornDriverSequel::VERSION
-  spec.authors       = ["Lars Krantz", "Morgan Hallgren"]
-  spec.email         = ["lars.krantz@alaz.se", "morgan.hallgren@gmail.com"]
-  spec.description   = %q{sequel driver for sandthorn}
-  spec.summary       = %q{sequel driver for sandthorn}
+  spec.authors       = ["Lars Krantz", "Morgan Hallgren", "Jesper Josefsson"]
+  spec.email         = ["lars.krantz@alaz.se", "morgan.hallgren@gmail.com", "jesper.josefsson@gmail.com"]
+  spec.description   = %q{Sequel driver for Sandthorn}
+  spec.summary       = %q{Sequel driver for Sandthorn}
   spec.homepage      = ""
   spec.license       = "MIT"
 
