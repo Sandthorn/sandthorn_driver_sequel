@@ -41,50 +41,21 @@ module SandthornDriverSequel
 
 		context "when using get_events" do
 			context "and using take" do
-				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new], take: 2}
+				let(:events) {event_store.get_events after_sequence_number: 0, take: 2}
 				it "should find 2 events" do
 					expect(events.length).to eql 2
-				end
-			end
-			context "and getting events of type :new" do
-				let(:events) {event_store.get_events after_sequence_number: 0, include_events: [:new]}
-				it "should find 3 events" do
-					expect(events.length).to eql 3
-				end
-				it "should only be new-events" do
-					events.all? { |e| e[:event_name] == "new"  }
 				end
 			end
 			context "and combining args" do
 				let(:events) do
 					all = event_store.get_events after_sequence_number: 0
 					first_seq_number = all[0][:sequence_number]
-					event_store.get_events after_sequence_number: first_seq_number , exclude_events: [:foo],  include_events: [:new, "bar", :flubber], take: 100
+					event_store.get_events after_sequence_number: first_seq_number, take: 100
 				end
-				it "should find 4 events" do
-					expect(events.length).to eql 4
+				it "should find 7 events" do
+					expect(events.length).to eql 7
 				end
-				it "should not be any foo-events" do
-					events.all? { |e| e[:event_name] != "foo" }
-				end
-			end
-			context "and getting all events but excluding new" do
-				let(:events) {event_store.get_events after_sequence_number: 0, exclude_events: [:new] }
-				it "should find 5 events" do
-					expect(events.length).to eql 5
-				end
-				it "should only be new and foo-events" do
-					events.all? { |e| e[:event_name] != "new" }
-				end
-			end
-			context "and getting events of type :new and foo" do
-				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: ["String", SandthornDriverSequel::EventStore], include_events: [:new, "foo"]}
-				it "should find 3 events" do
-					expect(events.length).to eql 3
-				end
-				it "should only be new and foo-events" do
-					events.all? { |e| e[:event_name] == "new" || e[:event_name] == "foo" }
-				end
+				
 			end
 			context "and getting events for SandthornDriverSequel::EventStore, and String after 0" do
 				let(:events) {event_store.get_events after_sequence_number: 0, aggregate_types: [SandthornDriverSequel::EventStore, String]}

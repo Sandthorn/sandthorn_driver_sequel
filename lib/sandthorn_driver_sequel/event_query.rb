@@ -7,19 +7,13 @@ module SandthornDriverSequel
     def build(
       aggregate_types: [],
       take: 0,
-      after_sequence_number: 0,
-      include_events: [],
-      exclude_events: [])
+      after_sequence_number: 0)
 
       aggregate_types.map!(&:to_s)
-      include_events.map!(&:to_s)
-      exclude_events.map!(&:to_s)
 
       query = storage.events
       query = add_aggregate_types(query, aggregate_types)
       query = add_sequence_number(query, after_sequence_number)
-      query = add_included_events(query, include_events)
-      query = add_excluded_events(query, exclude_events)
       query = add_select(query)
       query = add_limit(query, take)
       @query = query.order(:sequence_number)
@@ -56,22 +50,6 @@ module SandthornDriverSequel
         :event_data,
         :timestamp
       ]
-    end
-
-    def add_excluded_events(query, exclude_events)
-      if exclude_events.any?
-        query.exclude(event_name: exclude_events)
-      else
-        query
-      end
-    end
-
-    def add_included_events(query, include_events)
-      if include_events.any?
-        query.where(event_name: include_events)
-      else
-        query
-      end
     end
 
     def add_sequence_number(query, after_sequence_number)
