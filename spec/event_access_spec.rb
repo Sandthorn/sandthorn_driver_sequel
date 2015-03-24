@@ -66,13 +66,19 @@ module SandthornDriverSequel
 
     describe "#find_events_by_aggregate_id" do
       context "when there are events" do
-        it "returns correct events" do
+        before do
           access.store_events(aggregate, events)
+        end
+        let(:stored_events) { access.find_events_by_aggregate_id(aggregate.aggregate_id) }
 
-          stored_events = access.find_events_by_aggregate_id(aggregate.aggregate_id)
+        it "returns correct events" do
           expect(stored_events.map(&:aggregate_table_id)).to all(eq(aggregate.id))
           expect(stored_events.size).to eq(events.size)
           expect(stored_events).to all(respond_to(:merge))
+        end
+        it "returns events in correct order" do
+          expect(stored_events.first[:aggregate_version] < stored_events.last[:aggregate_version]).to be_truthy
+          expect(stored_events.first[:sequence_number] < stored_events.last[:sequence_number]).to be_truthy
         end
       end
     end
