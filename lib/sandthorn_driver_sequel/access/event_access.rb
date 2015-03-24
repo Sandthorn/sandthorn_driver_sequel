@@ -25,7 +25,7 @@ module SandthornDriverSequel
           :event_name,
           :event_data,
           :timestamp)
-        .order(aggregate_version)
+        .order(:sequence_number)
         .all)
     end
 
