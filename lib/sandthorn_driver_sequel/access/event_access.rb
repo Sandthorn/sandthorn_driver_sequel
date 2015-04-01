@@ -25,6 +25,7 @@ module SandthornDriverSequel
           :event_name,
           :event_data,
           :timestamp)
+        .order(:sequence_number)
         .all)
     end
 
