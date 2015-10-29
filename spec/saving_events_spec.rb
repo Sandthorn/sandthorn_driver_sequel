@@ -86,5 +86,34 @@ module SandthornDriverSequel
 
 		end
 
+		context "when saving events that have no aggregate_version" do
+			let(:test_events) do
+				e = []
+				e << {aggregate_version: nil, event_name: "new", event_args: nil, event_data: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
+				e << {aggregate_version: nil, event_name: "foo", event_args: ["bar"], event_data: "noop"}
+				e << {aggregate_version: nil, event_name: "flubber", event_args: ["bar"] , event_data: "noop"}
+			end
+
+      let(:aggregate_id) { "c0456e26-e29a-4f67-92fa-130b3a31a39a" }
+
+      it "should be able to save and retrieve events on the aggregate" do
+				event_store.save_events test_events, aggregate_id, String
+				events = event_store.get_aggregate_events aggregate_id
+				expect(events.length).to eql test_events.length
+			end
+
+			it "should have correct keys when asking for events" do
+				event_store.save_events test_events, aggregate_id, String
+				events = event_store.get_aggregate aggregate_id, String
+				event = events.first
+				expect(event[:event_data]).to eql(test_events.first[:event_data])
+        expect(event[:event_name]).to eql("new")
+        expect(event[:aggregate_id]).to eql aggregate_id
+        expect(event[:aggregate_version]).to eql 1
+        expect(event[:sequence_number]).to be_a(Fixnum)
+        expect(event[:timestamp]).to be_a(Time)
+			end
+    end
+
 	end
 end
