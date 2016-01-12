@@ -54,7 +54,7 @@ module SandthornDriverSequel
     def build_event_data(aggregate, timestamp, event)
       {
           aggregate_table_id: aggregate.id,
-          aggregate_version: event.aggregate_version,
+          aggregate_version: aggregate.aggregate_version,
           event_name: event.event_name,
           event_data: event.event_data,
           timestamp: timestamp
@@ -73,7 +73,7 @@ module SandthornDriverSequel
     def store_event(aggregate, timestamp, event)
       event = EventWrapper.new(event)
       aggregate.aggregate_version += 1
-      check_versions!(aggregate, event)
+      check_versions!(aggregate, event) if event[:aggregate_version]
       data = build_event_data(aggregate, timestamp, event)
       storage.events.insert(data)
     end
