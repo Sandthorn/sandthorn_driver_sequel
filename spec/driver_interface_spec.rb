@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 module SandthornDriverSequel
-	describe EventStore do
-		before(:each) { prepare_for_test }
-		context "interface structure" do
-			let(:subject) { event_store }
+  describe EventStore do
+    before(:each) { prepare_for_test }
+    context "interface structure" do
+      let(:subject) { event_store }
       methods = [
         :save_events,
         :save_snapshot,
@@ -27,5 +27,5 @@ module SandthornDriverSequel
       end
 
     end
-	end
+  end
 end
