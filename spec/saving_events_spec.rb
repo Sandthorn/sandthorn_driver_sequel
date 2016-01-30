@@ -69,27 +69,28 @@ module SandthornDriverSequel
       end
     end
 
-    context "when saving events that are serilized with msgpack" do
-      let(:test_data) { {name: "test", hash: {t: 123}} }
-      let(:test_events) do
-        e = []
-        data = MessagePack.pack(test_data, symbolize_keys: true)
-        e << {aggregate_version: 1, event_name: "new", event_args: nil, event_data: data}
-      end
-      let(:aggregate_id_1) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
+    #Obsolite when serialization is moved to driver
+    # context "when saving events that are serilized with msgpack" do
+    #   let(:test_data) { {name: "test", hash: {t: 123}} }
+    #   let(:test_events) do
+    #     e = []
+    #     data = MessagePack.pack(test_data, symbolize_keys: true)
+    #     e << {aggregate_version: 1, event_name: "new", event_args: nil, event_data: data}
+    #   end
+    #   let(:aggregate_id_1) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
 
-      it "should save and get events that are serialized with msgpack" do
-        event_store.save_events test_events, aggregate_id_1, String
-        events = event_store.get_aggregate aggregate_id_1, String
-        expect(MessagePack.unpack(events.first[:event_data], symbolize_keys: true)).to eql test_data
-      end
+    #   it "should save and get events that are serialized with msgpack" do
+    #     event_store.save_events test_events, aggregate_id_1, String
+    #     events = event_store.get_aggregate aggregate_id_1, String
+    #     expect(MessagePack.unpack(events.first[:event_data], symbolize_keys: true)).to eql test_data
+    #   end
 
-    end
+    # end
 
     context "when saving events that have no aggregate_version" do
       let(:test_events) do
         e = []
-        e << {aggregate_version: nil, event_name: "new", event_args: nil, event_data: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
+        e << {aggregate_version: nil, event_name: "new", event_args: nil, event_data: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
         e << {aggregate_version: nil, event_name: "foo", event_args: ["bar"], event_data: "noop"}
         e << {aggregate_version: nil, event_name: "flubber", event_args: ["bar"] , event_data: "noop"}
       end
@@ -106,6 +107,7 @@ module SandthornDriverSequel
         event_store.save_events test_events, aggregate_id, String
         events = event_store.get_aggregate aggregate_id, String
         event = events.first
+
         expect(event[:event_data]).to eql(test_events.first[:event_data])
         expect(event[:event_name]).to eql("new")
         expect(event[:aggregate_id]).to eql aggregate_id

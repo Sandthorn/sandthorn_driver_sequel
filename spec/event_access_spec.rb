@@ -15,9 +15,11 @@ module SandthornDriverSequel
       aggregate_access.register_aggregate(aggregate_id, "foo")
     end
     let(:storage) { Storage.new(db, :test) }
+    let(:serializer) { -> (data) { YAML.dump(data) } }
+    let(:deserializer) { -> (data) { YAML.load(data) } }
     let(:aggregate_access) { AggregateAccess.new(storage) }
     let(:snapshot_access) { SnapshotAccess.new(storage)}
-    let(:access) { EventAccess.new(storage) }
+    let(:access) { EventAccess.new(storage, serializer, deserializer) }
 
     let(:events) do
       [

@@ -2,7 +2,7 @@ module SandthornDriverSequel
   class EventStore
     include EventStoreContext
 
-    attr_reader :driver, :context, :event_serializer, :event_deserializer
+    attr_reader :driver, :context
 
     def initialize url: nil, connection: nil, context: nil, event_serializer: nil, event_deserializer: nil
       @driver = connection if connection
@@ -18,6 +18,7 @@ module SandthornDriverSequel
         aggregates = get_aggregate_access(db)
         event_access = get_event_access(db)
         aggregate = aggregates.find_or_register(aggregate_id, class_name)
+        #puts @event_serializer.call(events.first)
         event_access.store_events(aggregate, events)
       end
     end
@@ -26,6 +27,8 @@ module SandthornDriverSequel
       driver.execute do |db|
         events = get_event_access(db)
         events.find_events_by_aggregate_id(aggregate_id)
+        #puts @event_deserializer.call(e.first)
+        #e
       end
     end
 
@@ -126,7 +129,7 @@ module SandthornDriverSequel
     end
 
     def get_event_access(db)
-      EventAccess.new(storage(db))
+      EventAccess.new(storage(db), @event_serializer, @event_deserializer)
     end
 
     def get_snapshot_access(db)
@@ -134,7 +137,7 @@ module SandthornDriverSequel
     end
 
     def storage(db)
-      Storage.new(db, context)
+      Storage.new(db, @context)
     end
 
   end

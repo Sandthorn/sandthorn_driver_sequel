@@ -10,11 +10,11 @@ module SandthornDriverSequel
     end
 
     it "should have the default event_serializer" do
-      expect(driver.event_serializer).to be_a Proc
+      expect(driver.instance_variable_get "@event_serializer".to_sym).to be_a Proc
     end
 
     it "should have the default event_deserializer" do
-      expect(driver.event_deserializer).to be_a Proc
+      expect(driver.instance_variable_get "@event_deserializer".to_sym).to be_a Proc
     end
 
     context "serialization" do
@@ -30,11 +30,11 @@ module SandthornDriverSequel
       end
 
       it "should have a configuration event_serializer" do
-        expect(driver.event_serializer).to eql :serializater
+        expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializater
       end
 
       it "should have a configuration event_deserializer" do
-        expect(driver.event_deserializer).to eql :deserializater
+        expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializater
       end
 
     end

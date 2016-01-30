@@ -3,6 +3,12 @@ module SandthornDriverSequel
     # = EventAccess
     # Reads and writes events.
 
+    def initialize storage, serializer, deserializer
+      @serializer = serializer
+      @deserializer = deserializer
+      super storage
+    end
+
     def store_events(aggregate, events)
       events = Utilities.array_wrap(events)
       timestamp = Time.now.utc
@@ -48,16 +54,25 @@ module SandthornDriverSequel
 
     def wrap(arg)
       events = Utilities.array_wrap(arg)
-      events.map { |e| EventWrapper.new(e.values) }
+      events.map { |e| EventWrapper.new(deserilize(e).values); }
+    end
+
+    def deserilize event
+      event[:event_data] = @deserializer.call(event[:event_data])
+      event
+    end
+
+    def serialize event_data
+      @serializer.call(event_data)
     end
 
     def build_event_data(aggregate, timestamp, event)
       {
-          aggregate_table_id: aggregate.id,
-          aggregate_version: aggregate.aggregate_version,
-          event_name: event.event_name,
-          event_data: event.event_data,
-          timestamp: timestamp
+        aggregate_table_id: aggregate.id,
+        aggregate_version: aggregate.aggregate_version,
+        event_name: event.event_name,
+        event_data: serialize(event.event_data),
+        timestamp: timestamp
       }
     end
 

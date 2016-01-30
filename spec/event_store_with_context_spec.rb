@@ -3,8 +3,8 @@ module SandthornDriverSequel
   describe EventStore do
     let(:context) { :event_store_spec }
     before(:each) { prepare_for_test context: context; prepare_for_test context: nil; }
-    let(:event_store_with_context) { EventStore.new url: event_store_url, context: context }  
-    let(:event_store_without_context) { EventStore.new url: event_store_url }
+    let(:event_store_with_context) { SandthornDriverSequel.driver_from_url url: event_store_url, context: context  }  
+    let(:event_store_without_context) { SandthornDriverSequel.driver_from_url url: event_store_url }
     context("when saving in one context and retrieving in another") do
       let(:test_events) do
         e = [] 
