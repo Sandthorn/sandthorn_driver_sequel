@@ -15,7 +15,6 @@ module SandthornDriverSequel
         :get_all_types,
         :get_snapshot,
         :get_events,
-        :url,
         :context,
         :driver
       ]
