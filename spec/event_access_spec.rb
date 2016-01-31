@@ -26,11 +26,11 @@ module SandthornDriverSequel
         {
           aggregate_version: 1,
           event_name: "new",
-          event_data: "new_data"
+          event_args: "new_data"
         },{
           aggregate_version: 2,
           event_name: "foo",
-          event_data: "foo_data"
+          event_args: "foo_data"
         }
       ]
     end
@@ -96,7 +96,7 @@ module SandthornDriverSequel
 
         events = access.after_snapshot(snapshot)
         expect(events.count).to eq(1)
-        expect(events.first[:event_data]).to eq("foo_data")
+        expect(events.first[:event_args]).to eq("foo_data")
       end
     end
 

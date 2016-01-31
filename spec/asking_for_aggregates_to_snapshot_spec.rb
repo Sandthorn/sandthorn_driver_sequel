@@ -54,7 +54,7 @@ module SandthornDriverSequel
         events = []
         i = 0
         while i < count do
-          events << { aggregate_version: i+start_at, event_data: nil, event_name: "event_foo_#{i}" }
+          events << { aggregate_version: i+start_at, event_args: nil, event_name: "event_foo_#{i}" }
           i += 1
         end
         events
