@@ -18,7 +18,6 @@ module SandthornDriverSequel
         aggregates = get_aggregate_access(db)
         event_access = get_event_access(db)
         aggregate = aggregates.find_or_register(aggregate_id, class_name)
-        #puts @event_serializer.call(events.first)
         event_access.store_events(aggregate, events)
       end
     end
@@ -27,8 +26,6 @@ module SandthornDriverSequel
       driver.execute do |db|
         events = get_event_access(db)
         events.find_events_by_aggregate_id(aggregate_id)
-        #puts @event_deserializer.call(e.first)
-        #e
       end
     end
 
