@@ -19,24 +19,32 @@ module SandthornDriverSequel
     end
 
     def driver_from_url url: nil, context: nil
-      yield(configuration) if block_given?
+      yield(session_configure) if block_given?
       driver = EventStore.new url: url, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
-      @configuration = nil
+      @session_configuration = nil
       return driver
     end
 
     def driver_from_connection connection: nil, context: nil
-      yield(configuration) if block_given?
+      yield(session_configure) if block_given?
       driver = EventStore.new connection: connection, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
-      @configuration = nil
+      @session_configuration = nil
       return driver
     end
 
-    def configuration
-      @configuration ||= Configuration.new
+    def configure
+      yield(configuration) if block_given?
     end
 
     private
+
+    def session_configure
+      @session_configuration ||= Configuration.new 
+    end
+
+    def configuration
+      @session_configuration || @configuration ||= Configuration.new
+    end
 
     class Configuration
 
