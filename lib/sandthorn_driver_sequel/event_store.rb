@@ -122,19 +122,19 @@ module SandthornDriverSequel
     end
 
     def get_aggregate_access(db)
-      AggregateAccess.new(storage(db))
+      @aggregate_access ||= AggregateAccess.new(storage(db))
     end
 
     def get_event_access(db)
-      EventAccess.new(storage(db), @event_serializer, @event_deserializer)
+      @event_access ||= EventAccess.new(storage(db), @event_serializer, @event_deserializer)
     end
 
     def get_snapshot_access(db)
-      SnapshotAccess.new(storage(db))
+      @snapshot_access ||= SnapshotAccess.new(storage(db))
     end
 
     def storage(db)
-      Storage.new(db, @context)
+      @storage ||= Storage.new(db, @context)
     end
 
   end
