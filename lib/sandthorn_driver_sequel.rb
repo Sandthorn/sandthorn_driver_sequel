@@ -18,14 +18,14 @@ module SandthornDriverSequel
 
     def driver_from_url url: nil, context: nil
       yield(session_configure) if block_given?
-      driver = EventStore.new url: url, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
+      driver = EventStore.from_url url, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
       @session_configuration = nil
       return driver
     end
 
     def driver_from_connection connection: nil, context: nil
       yield(session_configure) if block_given?
-      driver = EventStore.new connection: connection, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
+      driver = EventStore.new connection, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
       @session_configuration = nil
       return driver
     end

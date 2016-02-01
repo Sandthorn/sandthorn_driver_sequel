@@ -7,15 +7,22 @@ module SandthornDriverSequel
   class EventStore
     include EventStoreContext
 
-    attr_reader :driver, :context
+    attr_accessor :driver, :context, :event_serializer, :event_deserializer
 
-    def initialize url: nil, connection: nil, context: nil, event_serializer: nil, event_deserializer: nil
-      @driver = connection if connection
-      @driver = SequelDriver.new(url: url) if url
-
+    def initialize connection, context: nil, event_serializer:, event_deserializer:
+      @driver = connection
       @context = context
       @event_serializer = event_serializer
       @event_deserializer = event_deserializer
+    end
+
+    def self.from_url url, context: nil, event_serializer:, event_deserializer:
+      allocate.tap { |o|
+        o.driver = SequelDriver.new(url: url)
+        o.context = context
+        o.event_serializer = event_serializer
+        o.event_deserializer = event_deserializer
+      }
     end
 
     def save_events events, aggregate_id, class_name

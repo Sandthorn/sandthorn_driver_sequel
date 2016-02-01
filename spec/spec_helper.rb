@@ -28,6 +28,4 @@ end
 
 def event_store context: :test
   SandthornDriverSequel.driver_from_url url: event_store_url, context: context
-
-  #SandthornDriverSequel::EventStore.new url: event_store_url, context: context
 end
