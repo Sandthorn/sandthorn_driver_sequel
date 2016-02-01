@@ -3,11 +3,11 @@ require 'sequel'
 module SandthornDriverSequel
   class SequelDriver
 
-    def initialize args = {}
-      url = args.fetch(:url,nil)
-      connection = args.fetch(:connection,nil)
+    def initialize(args = {})
       Sequel.default_timezone = :utc
-      @db = connection || Sequel.connect(url)
+      @db = args.fetch(:connection) {
+        Sequel.connect(args.fetch(:url))
+      }
     end
 
     def execute
