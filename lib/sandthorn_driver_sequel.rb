@@ -3,8 +3,6 @@ require "sandthorn_driver_sequel/utilities"
 require "sandthorn_driver_sequel/wrappers"
 require "sandthorn_driver_sequel/event_query"
 require "sandthorn_driver_sequel/event_store_context"
-require "sandthorn_driver_sequel/access"
-require "sandthorn_driver_sequel/storage"
 require 'sandthorn_driver_sequel/event_store'
 require 'sandthorn_driver_sequel/errors'
 require 'sandthorn_driver_sequel/migration'

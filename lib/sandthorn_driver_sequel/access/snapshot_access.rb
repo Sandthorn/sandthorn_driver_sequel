@@ -1,3 +1,5 @@
+require "sandthorn_driver_sequel/access"
+
 module SandthornDriverSequel
   class SnapshotAccess < Access::Base
 
