@@ -14,6 +14,9 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.filter_run_excluding benchmark: true
   config.order = 'random'
+  # config.before(:each) do
+  #   prepare_for_test
+  # end
 end
 def prepare_for_test context: :test
   migrator = SandthornDriverSequel::Migration.new url: event_store_url, context: context
@@ -23,7 +26,6 @@ end
 
 def event_store_url
   "sqlite://spec/db/event_store.sqlite3"
-  #"postgres://morganhallgren@localhost:5432/test_1"
 end
 
 def event_store context: :test

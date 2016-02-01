@@ -57,7 +57,7 @@ module SandthornDriverSequel
     def wrap(arg)
       events = Utilities.array_wrap(arg)
       events.each { |e| e[:event_args] = deserilize(e[:event_data]) }
-      events.map { |e| EventWrapper.new(e.values); }
+      events.map { |e| EventWrapper.new(e.values) }
     end
 
     def deserilize event_data

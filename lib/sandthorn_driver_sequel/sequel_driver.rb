@@ -4,9 +4,10 @@ module SandthornDriverSequel
   class SequelDriver
 
     def initialize args = {}
-      @url = args.fetch(:url)
+      url = args.fetch(:url,nil)
+      connection = args.fetch(:connection,nil)
       Sequel.default_timezone = :utc
-      @db = Sequel.connect(@url)
+      @db = connection || Sequel.connect(url)
     end
 
     def execute

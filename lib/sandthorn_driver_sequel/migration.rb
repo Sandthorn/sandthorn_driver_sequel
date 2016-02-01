@@ -3,8 +3,8 @@ module SandthornDriverSequel
   class Migration
     include EventStoreContext
     attr_reader :driver, :context
-    def initialize url: nil, context: nil
-      @driver = SequelDriver.new url: url
+    def initialize url: nil, connection: nil, context: nil
+      @driver = SequelDriver.new url: url, connection: connection
       @context = context
     end
     def migrate!

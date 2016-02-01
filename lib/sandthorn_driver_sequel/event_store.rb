@@ -9,20 +9,15 @@ module SandthornDriverSequel
 
     attr_accessor :driver, :context, :event_serializer, :event_deserializer
 
-    def initialize connection, context: nil, event_serializer:, event_deserializer:
+    def initialize connection, context: nil, configuration:
       @driver = connection
       @context = context
-      @event_serializer = event_serializer
-      @event_deserializer = event_deserializer
+      @event_serializer = configuration.event_serializer
+      @event_deserializer = configuration.event_deserializer
     end
 
-    def self.from_url url, context: nil, event_serializer:, event_deserializer:
-      allocate.tap { |o|
-        o.driver = SequelDriver.new(url: url)
-        o.context = context
-        o.event_serializer = event_serializer
-        o.event_deserializer = event_deserializer
-      }
+    def self.from_url url, context: nil, configuration:
+      new(SequelDriver.new(url: url), context: context, configuration: configuration)
     end
 
     def save_events events, aggregate_id, class_name

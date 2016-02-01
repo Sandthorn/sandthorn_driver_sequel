@@ -22,8 +22,8 @@ module SandthornDriverSequel
       context "change global configuration" do
         before do
           SandthornDriverSequel.configure { |conf|
-            conf.event_serializer = :serializater_global
-            conf.event_deserializer = :deserializater_global
+            conf.event_serializer = :serializer_global
+            conf.event_deserializer = :deserializer_global
           }
         end
 
@@ -36,11 +36,11 @@ module SandthornDriverSequel
         end
 
         it "should have the new event_serializer" do
-          expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializater_global
+          expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializer_global
         end
 
         it "should have the default event_deserializer" do
-          expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializater_global
+          expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializer_global
         end
       end
     end
@@ -48,8 +48,8 @@ module SandthornDriverSequel
     context "session configuration" do
       let(:driver) do
         SandthornDriverSequel.driver_from_connection(connection: Sequel.sqlite) { |conf|
-          conf.event_serializer = :serializater
-          conf.event_deserializer = :deserializater
+          conf.event_serializer = :serializer
+          conf.event_deserializer = :deserializer
         }
       end
 
@@ -58,11 +58,11 @@ module SandthornDriverSequel
       end
 
       it "should have a configuration event_serializer" do
-        expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializater
+        expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializer
       end
 
       it "should have a configuration event_deserializer" do
-        expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializater
+        expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializer
       end
 
     end

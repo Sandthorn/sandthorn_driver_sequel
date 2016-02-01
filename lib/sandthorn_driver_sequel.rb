@@ -17,32 +17,36 @@ module SandthornDriverSequel
     end
 
     def driver_from_url url: nil, context: nil
-      yield(session_configure) if block_given?
-      driver = EventStore.from_url url, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
-      @session_configuration = nil
-      return driver
+
+      if block_given?
+        configuration = Configuration.new
+        yield(configuration)
+      else
+        configuration = self.configuration
+      end
+
+      EventStore.from_url(url, context: context, configuration: configuration)
     end
 
     def driver_from_connection connection: nil, context: nil
-      yield(session_configure) if block_given?
-      driver = EventStore.new connection, context: context, event_serializer: configuration.event_serializer, event_deserializer: configuration.event_deserializer
-      @session_configuration = nil
-      return driver
+      if block_given?
+        configuration = Configuration.new
+        yield(configuration)
+      else
+        configuration = self.configuration
+      end
+      EventStore.new(SequelDriver.new(connection: connection), context: context, configuration: configuration)
     end
 
     def configure
       yield(configuration) if block_given?
     end
 
-    private
-
-    def session_configure
-      @session_configuration ||= Configuration.new 
-    end
-
     def configuration
-      @session_configuration || @configuration ||= Configuration.new
+      @configuration ||= Configuration.new
     end
+
+    private
 
     class Configuration
 
@@ -70,14 +74,7 @@ module SandthornDriverSequel
         -> (data) { YAML.load(data) }
       end
 
-      def serialize_event(data)
-        event_serializer.call(data)
-      end
-
-      def deserialize_event(data)
-        event_deserializer.call(data)
-      end
-
+      
     end
   end
 end
