@@ -10,20 +10,20 @@ module Sandthorn
       before(:each) { prepare_for_test }
       let(:test_events_20_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new", event_data: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
+        e << {aggregate_version: 1, event_name: "new", event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
         19.times do |i| 
-           e << {aggregate_version: i+2, event_name: "foo", event_data: "A2"}
+           e << {aggregate_version: i+2, event_name: "foo", event_args: "A2"}
         end
         e
       end
       let(:test_events_one_event) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new", event_data: "B1" }
+        e << {aggregate_version: 1, event_name: "new", event_args: "B1" }
       end
       let(:test_events_two_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new", event_data: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
-        e << {aggregate_version: 2, event_name: "foo", event_data: "A2"}
+        e << {aggregate_version: 1, event_name: "new", event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
+        e << {aggregate_version: 2, event_name: "foo", event_args: "A2"}
       end
       let(:aggregate_id) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
       let(:es) { event_store }

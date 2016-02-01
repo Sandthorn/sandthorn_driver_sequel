@@ -7,7 +7,7 @@ module SandthornDriverSequel
     context "when saving a prefectly sane event stream" do
       let(:test_events) do
         e = []
-        e << {aggregate_version: 1, event_name: "new", event_args: nil, event_args: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
+        e << {aggregate_version: 1, event_name: "new", event_args: nil, event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
         e << {aggregate_version: 2, event_name: "foo", event_args: ["bar"], event_args: "noop"}
         e << {aggregate_version: 3, event_name: "flubber", event_args: ["bar"] , event_args: "noop"}
       end

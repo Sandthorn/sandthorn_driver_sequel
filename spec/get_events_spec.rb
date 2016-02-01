@@ -5,7 +5,7 @@ module SandthornDriverSequel
     before(:each) { prepare_for_test }
     let(:test_events_a) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_args: "---\n:method_name: new\n:method_args: []\n:attribute_deltas:\n- :attribute_name: :@aggregate_id\n  :old_value: \n  :new_value: 0a74e545-be84-4506-8b0a-73e947856327\n"}
+      e << {aggregate_version: 1, event_name: "new", event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
       e << {aggregate_version: 2, event_name: "foo", event_args: "A2"}
       e << {aggregate_version: 3, event_name: "bard", event_args: "A3"}
     end
