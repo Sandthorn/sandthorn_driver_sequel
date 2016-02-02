@@ -25,7 +25,7 @@ module SandthornDriverSequel
         configuration = self.configuration
       end
 
-      EventStore.from_url(url, context: context, configuration: configuration)
+      EventStore.from_url(url, configuration, context)
     end
 
     def driver_from_connection connection: nil, context: nil
@@ -35,7 +35,7 @@ module SandthornDriverSequel
       else
         configuration = self.configuration
       end
-      EventStore.new(SequelDriver.new(connection: connection), context: context, configuration: configuration)
+      EventStore.new(SequelDriver.new(connection: connection), configuration, context)
     end
 
     def configure
