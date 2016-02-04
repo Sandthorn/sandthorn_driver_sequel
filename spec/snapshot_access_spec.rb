@@ -12,12 +12,14 @@ module SandthornDriverSequel
     let(:db) { Sequel.connect(event_store_url)}
     let(:aggregate_id) { generate_uuid }
     let(:storage) { Storage.new(db, :test) }
-    let(:serializer) { -> (data) { YAML.dump(data) } }
-    let(:deserializer) { -> (data) { YAML.load(data) } }
+    let(:event_serializer) { -> (data) { YAML.dump(data) } }
+    let(:event_deserializer) { -> (data) { YAML.load(data) } }
+    let(:snapshot_serializer) { -> (data) { YAML.dump(data) } }
+    let(:snapshot_deserializer) { -> (data) { YAML.load(data) } }
     let(:aggregate_access) { AggregateAccess.new(storage) }
-    let(:event_access) { EventAccess.new(storage, serializer, deserializer) }
+    let(:event_access) { EventAccess.new(storage, event_serializer, event_deserializer) }
     let(:aggregate) { aggregate_access.register_aggregate(aggregate_id, "foo") }
-    let(:access) { SnapshotAccess.new(storage) }
+    let(:access) { SnapshotAccess.new(storage, snapshot_serializer, snapshot_deserializer) }
     let(:events) do
       [
           {

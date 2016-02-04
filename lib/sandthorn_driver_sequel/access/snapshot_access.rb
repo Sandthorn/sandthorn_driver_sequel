@@ -3,6 +3,12 @@ require "sandthorn_driver_sequel/access"
 module SandthornDriverSequel
   class SnapshotAccess < Access::Base
 
+    def initialize storage, serializer, deserializer
+      @serializer = serializer
+      @deserializer = deserializer
+      super storage
+    end
+
     def find_by_aggregate_id(aggregate_id)
       aggregate = aggregates.find_by_aggregate_id(aggregate_id)
       storage.snapshots.first(aggregate_table_id: aggregate.id)

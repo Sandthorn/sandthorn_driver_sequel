@@ -14,6 +14,8 @@ module SandthornDriverSequel
       @context = context
       @event_serializer = configuration.event_serializer
       @event_deserializer = configuration.event_deserializer
+      @snapshot_serializer = configuration.snapshot_serializer
+      @snapshot_deserializer = configuration.snapshot_deserializer
     end
 
     def self.from_url url, configuration, context = nil
@@ -137,7 +139,7 @@ module SandthornDriverSequel
     end
 
     def get_snapshot_access(db)
-      @snapshot_access ||= SnapshotAccess.new(storage(db))
+      @snapshot_access ||= SnapshotAccess.new(storage(db), @snapshot_serializer, @snapshot_deserializer)
     end
 
     def storage(db)
