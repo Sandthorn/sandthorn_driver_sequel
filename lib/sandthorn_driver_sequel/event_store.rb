@@ -38,10 +38,10 @@ module SandthornDriverSequel
       end
     end
 
-    def save_snapshot aggregate_snapshot, aggregate_id
+    def save_snapshot aggregate
       driver.execute_in_transaction do |db|
         snapshot_access = get_snapshot_access(db)
-        snapshot_access.record_snapshot(aggregate_id, aggregate_snapshot)
+        snapshot_access.record_snapshot(aggregate)
       end
     end
 
@@ -99,7 +99,7 @@ module SandthornDriverSequel
       driver.execute do |db|
         snapshots = get_snapshot_access(db)
         snapshot = snapshots.find_by_aggregate_id(aggregate_id)
-        transform_snapshot(snapshot)
+        snapshot.data
       end
     end
 

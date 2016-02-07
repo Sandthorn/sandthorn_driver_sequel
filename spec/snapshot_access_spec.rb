@@ -33,87 +33,74 @@ module SandthornDriverSequel
           }
       ]
     end
+    let(:snapshot_aggregate) { 
+      aggregate #register the aggregate
+      Struct::AggregateMock.new aggregate_id, 0
+    }
+
+    let(:snapshot_aggregate_2) { 
+      Struct::AggregateMock.new aggregate_id, 2
+    }
 
     describe "#find_by_aggregate_id" do
       it "returns the correct data" do
-        aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
-        access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 0, event_data: "data" })
+        access.record_snapshot(snapshot_aggregate)
         aggregate.update(aggregate_version: 1)
         snapshot = access.find_by_aggregate_id(aggregate.aggregate_id)
-        expected = {
-            aggregate_table_id: aggregate.id,
-            aggregate_version: 0,
-            snapshot_data: "data",
-            id: snapshot.id
-        }
-        expect(snapshot.values).to eq(expected)
+        expect(snapshot.data).to eql snapshot_aggregate
+        
       end
     end
 
     describe "#record" do
       context "when the aggregate doesn't exist" do
         it "raises an error" do
-          expect { access.record_snapshot("qux", "data") }.to raise_error(Errors::NoAggregateError)
+          agg = Struct::AggregateMock.new "qux", 1
+          expect { access.record_snapshot(agg) }.to raise_error(Errors::NoAggregateError)
         end
       end
       context "when the aggregate exists" do
         context "when no previous snapshot exists" do
           it "records the snapshot" do
-            aggregate_table_id = aggregate_access.register_aggregate(aggregate_id, "foo").id
+            
             expect(access.find_by_aggregate_id(aggregate_id)).to be_nil
-            access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "data"})
+            access.record_snapshot(snapshot_aggregate)
 
             snapshot = access.find_by_aggregate_id(aggregate_id)
             expect(snapshot).to_not be_nil
-            expect(snapshot.aggregate_table_id).to eq(aggregate_table_id)
-            expect(snapshot.snapshot_data).to eq("data")
-            expect(snapshot.aggregate_version).to eq(0)
+            expect(snapshot.data).to eq(snapshot_aggregate)
+            expect(snapshot.data.aggregate_version).to eq(0)
           end
         end
         context "when the snapshot isn't fresh" do
           context "when the versions match" do
             it "records a new snapshot" do
-              aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
               expect(access.find_by_aggregate_id(aggregate_id)).to be_nil
-              access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "data"})
+              access.record_snapshot(snapshot_aggregate)
               event_access.store_events(aggregate, events)
-              access.record_snapshot(aggregate_id, { aggregate_version: 2, event_data: "other_data"})
+              access.record_snapshot(snapshot_aggregate_2)
 
               snapshot = access.find_by_aggregate_id(aggregate_id)
               expect(snapshot).to_not be_nil
-              expect(snapshot.aggregate_table_id).to eq(aggregate.id)
-              expect(snapshot.snapshot_data).to eq("other_data")
-              expect(snapshot.aggregate_version).to eq(2)
+              expect(snapshot.data).to eq(snapshot_aggregate_2)
+              expect(snapshot.data.aggregate_version).to eq(2)
             end
           end
 
-          context "when the versions don't match" do
-            it "raises an error" do
-              aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
-              aggregate.update(aggregate_version: 10)
-              expect { access.record_snapshot(aggregate_id, snapshot_data) }.to raise_error
-            end
-          end
         end
-        context "when the snapshot is fresh" do
-          it "doesn't record a snapshot" do
-            aggregate = aggregate_access.register_aggregate(aggregate_id, "foo")
-            expect(access.find_by_aggregate_id(aggregate_id)).to be_nil
-            access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "data"})
-            access.record_snapshot(aggregate_id, { aggregate_version: 0, event_data: "new_data"})
-            snapshot = access.find_by_aggregate_id(aggregate_id)
-            expect(snapshot.snapshot_data).to eq("data")
-          end
-        end
+        
       end
     end
 
     it "can write and read snapshots" do
-      snapshot_id = access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 0, event_data: "data" })
+      
+      snapshot_id = access.record_snapshot(snapshot_aggregate)
       snapshot = access.find(snapshot_id)
+      
       expect(snapshot).to_not be_nil
-      expect(snapshot.snapshot_data).to eq("data")
+      expect(snapshot.data).to eq(snapshot_aggregate)
       expect(snapshot)
+
     end
 
     def generate_uuid

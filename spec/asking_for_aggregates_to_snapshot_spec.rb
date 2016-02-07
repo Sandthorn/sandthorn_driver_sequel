@@ -7,25 +7,27 @@ module SandthornDriverSequel
 
   describe EventStore do
     before(:each) { prepare_for_test }
+    let(:aggregate) { Struct::AggregateMock.new(aggregate_id, 11) }
+    let(:aggregate_id) { @id ||= UUIDTools::UUID.random_create.to_s }
     context "when asking for aggregates to snapshot" do
       let(:aggregates) {
-        [{id: "1", class_name: Foo}, {id: "2", class_name: Bar},{id: "3", class_name: Foo}]}
+        [{id: "1", class_name: Foo}, {id: aggregate_id, class_name: Struct::AggregateMock},{id: "3", class_name: Foo}]}
 
       before(:each) {save_test_events}
 
       context "when asking for type 'Bar' and max event count 5" do
-        let(:needs_snapshot) { event_store.obsolete_snapshots aggregate_types: [Bar], max_event_distance: 5 }
+        let(:needs_snapshot) { event_store.obsolete_snapshots aggregate_types: [Struct::AggregateMock], max_event_distance: 5 }
         context "and no snapshots exist" do
-          it "should return that id 2 with class Bar need to be snapshotted" do
+          it "should return that id 2 with class Struct::AggregateMock need to be snapshotted" do
             expect(needs_snapshot.length).to eql 1
             expect(needs_snapshot.first[:aggregate_id]).to eql aggregates[1][:id]
-            expect(needs_snapshot.first[:aggregate_type]).to eql "Bar"
+            expect(needs_snapshot.first[:aggregate_type]).to eql "Struct::AggregateMock"
           end
         end
         context "and a recent snapshot exists" do
           before(:each) do
             snapshot_data = { event_data: "YO MAN", aggregate_version: 11 }
-            event_store.save_snapshot(snapshot_data, aggregates[1][:id])
+            event_store.save_snapshot(aggregate)
           end
           it "should return nil" do
             expect(needs_snapshot).to be_empty

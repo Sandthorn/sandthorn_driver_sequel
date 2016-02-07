@@ -12,7 +12,7 @@ module SandthornDriverSequel
     let(:db) { Sequel.connect(event_store_url)}
     let(:aggregate_id) { SecureRandom.uuid }
     let(:aggregate) do
-      aggregate_access.register_aggregate(aggregate_id, "foo")
+      aggregate_access.register_aggregate(aggregate_id, "AggregateMock")
     end
     let(:storage) { Storage.new(db, :test) }
     let(:event_serializer) { -> (data) { YAML.dump(data) } }
@@ -22,6 +22,7 @@ module SandthornDriverSequel
     let(:aggregate_access) { AggregateAccess.new(storage) }
     let(:snapshot_access) { SnapshotAccess.new(storage, snapshot_serializer, snapshot_deserializer)}
     let(:access) { EventAccess.new(storage, event_serializer, event_deserializer) }
+
 
     let(:events) do
       [
@@ -91,11 +92,13 @@ module SandthornDriverSequel
       it "returns events after the given snapshot" do
         access.store_events(aggregate, events.first)
 
-        snapshot_id = snapshot_access.record_snapshot(aggregate.aggregate_id, { aggregate_version: 1, event_data: "foo"})
+        aggregate_struct = Struct::AggregateMock.new aggregate_id, events.first[:aggregate_version]
+
+        snapshot_id = snapshot_access.record_snapshot(aggregate_struct)
         snapshot = snapshot_access.find(snapshot_id)
 
         access.store_events(aggregate, events.last)
-
+        
         events = access.after_snapshot(snapshot)
         expect(events.count).to eq(1)
         expect(events.first[:event_args]).to eq("foo_data")

@@ -17,6 +17,7 @@ RSpec.configure do |config|
   # config.before(:each) do
   #   prepare_for_test
   # end
+  Struct.new("AggregateMock", :aggregate_id, :aggregate_version)
 end
 def prepare_for_test context: :test
   migrator = SandthornDriverSequel::Migration.new url: event_store_url, context: context

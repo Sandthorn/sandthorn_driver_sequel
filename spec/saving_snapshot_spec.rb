@@ -7,10 +7,11 @@ module SandthornDriverSequel
     let(:aggregate_id) { @id ||= UUIDTools::UUID.random_create.to_s }
     let(:test_events) { [{aggregate_version: 1, event_args: nil, event_name: "new"},{aggregate_version: 2, event_args: nil, event_name: "foo"}] } 
     let(:additional_events) { [{aggregate_version: 3, event_args: nil, event_name: "klopp"},{aggregate_version: 4, event_args: nil, event_name: "flipp"}] } 
-    let(:snapshot_data) { { event_data: YAML.dump(Object.new), aggregate_version: 2 } }    
-    let(:save_snapshot) { event_store.save_snapshot snapshot_data, aggregate_id }
-    let(:save_events) { event_store.save_events test_events, aggregate_id, SandthornDriverSequel::EventStore }
-    let(:save_additional_events) { event_store.save_events additional_events, aggregate_id, SandthornDriverSequel::EventStore }
+    #let(:snapshot_data) { { event_data: YAML.dump(Object.new), aggregate_version: 2 } }    
+    let(:aggregate) { Struct::AggregateMock.new aggregate_id, 2 }
+    let(:save_snapshot) { event_store.save_snapshot aggregate }
+    let(:save_events) { event_store.save_events test_events, aggregate_id, Struct::AggregateMock }
+    let(:save_additional_events) { event_store.save_events additional_events, aggregate_id, Struct::AggregateMock }
     context "when loading an aggregate using get_aggregate" do
       context "and it has a snapshot" do
         before(:each) do
@@ -18,7 +19,7 @@ module SandthornDriverSequel
           save_snapshot
           save_additional_events
         end
-        let(:events) { event_store.get_aggregate aggregate_id, SandthornDriverSequel::EventStore }
+        let(:events) { event_store.get_aggregate aggregate_id, Struct::AggregateMock }
         it "should have the first event as :aggregate_set_from_snapshot" do
           expect(events.first[:event_name]).to eql "aggregate_set_from_snapshot"
         end
@@ -40,7 +41,7 @@ module SandthornDriverSequel
         it "should be able to save and get snapshot" do
           save_snapshot
           snap = event_store.get_snapshot(aggregate_id)
-          expect(snap).to eql snapshot_data
+          expect(snap).to eql aggregate
         end
       end
       context "when trying to save a snapshot on a non-existing aggregate" do
@@ -48,14 +49,7 @@ module SandthornDriverSequel
           expect { save_snapshot }.to raise_error SandthornDriverSequel::Errors::NoAggregateError
         end
       end
-      context "when trying to save a snapshot with a non-existing aggregate_version" do
-        before(:each) { save_events }
-        it "should raise a WrongAggregateVersion error" do
-          data = snapshot_data
-          data[:aggregate_version] = 100
-          expect { event_store.save_snapshot data, aggregate_id }.to raise_error SandthornDriverSequel::Errors::WrongSnapshotVersionError
-        end
-      end
+
       context "when saving a snapshot twice" do
         before(:each) { save_events; save_snapshot }
         it "should not raise error" do
@@ -65,9 +59,8 @@ module SandthornDriverSequel
       context "when saving a snapshot on a version less than current version" do
         before(:each) { save_events; }
         it "should save without protesting" do
-          data = snapshot_data
-          data[:aggregate_version] = 1
-          event_store.save_snapshot(data, aggregate_id)
+          data = Struct::AggregateMock.new aggregate_id, 1
+          event_store.save_snapshot(data)
           snap = event_store.get_snapshot(aggregate_id)
           expect(snap).to eql data
         end
