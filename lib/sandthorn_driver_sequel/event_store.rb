@@ -65,9 +65,7 @@ module SandthornDriverSequel
 
     def build_snapshot_event(snapshot)
       {
-          aggregate_version: snapshot[:aggregate_version],
-          event_data: snapshot[:snapshot_data],
-          event_name: "aggregate_set_from_snapshot"
+        aggregate: snapshot.data,
       }
     end
 
