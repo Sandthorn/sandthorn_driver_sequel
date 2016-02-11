@@ -18,6 +18,7 @@ Or install it yourself as:
 
     $ gem install sandthorn_driver_sequel
 
+## Usage
 
 ### `SandthornDriverSequel.configure`
 
