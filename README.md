@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ### `SandthornDriverSequel.configure`
 
-Setup the global configuration of `SandthornDriverSequel`. The default data serialization is YAML.
+Change the global configuration, the default data serialization for events and snapshots are YAML.
 
 Change the serialization of events and snapshots to Oj.
 
@@ -37,7 +37,7 @@ SandthornDriverSequel.configure { |conf|
 
 ### `SandthornDriverSequel.driver_from_connection`
 
-Creates a driver from a Sequel connection. Its possible to send in a block like the one for `configure` to use a specific configuration for the created driver.
+Creates a driver from a Sequel connection. Its possible to send in a block like the one for `configure` to chage configuration for the driver.
 
 ```ruby
 driver = SandthornDriverSequel.driver_from_connection(connection: Sequel.sqlite)
@@ -45,7 +45,7 @@ driver = SandthornDriverSequel.driver_from_connection(connection: Sequel.sqlite)
 
 ### `SandthornDriverSequel.driver_from_url`
 
-Creates a driver from a Sequel url. Its possible to send in a block like the one for `configure` to use a specific configuration for the created driver.
+Creates a driver from a Sequel url. Its possible to send in a block like the one for `configure` to change configuration for the driver.
 
 ```ruby
 driver = SandthornDriverSequel.driver_from_connection(url: "<sequel url string>")
