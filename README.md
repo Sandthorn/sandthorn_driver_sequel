@@ -18,9 +18,37 @@ Or install it yourself as:
 
     $ gem install sandthorn_driver_sequel
 
-## Usage
 
-TODO: Write usage instructions here
+### `SandthornDriverSequel.configure`
+
+Setup the global configuration of `SandthornDriverSequel`. The default data serialization is YAML.
+
+Change the serialization of events and snapshots to Oj.
+
+```ruby
+SandthornDriverSequel.configure { |conf|
+  conf.event_serializer = Proc.new { |data| Oj::dump(data) }
+  conf.event_deserializer = Proc.new { |data| Oj::load(data) }
+  conf.snapshot_serializer = Proc.new { |data| Oj::dump(data) }
+  conf.snapshot_deserializer = Proc.new { |data| Oj::dump(data) }
+}
+```
+
+### `SandthornDriverSequel.driver_from_connection`
+
+Creates a driver from a Sequel connection. Its possible to send in a block like the one for `configure` to use a specific configuration for the created driver.
+
+```ruby
+driver = SandthornDriverSequel.driver_from_connection(connection: Sequel.sqlite)
+```
+
+### `SandthornDriverSequel.driver_from_url`
+
+Creates a driver from a Sequel url. Its possible to send in a block like the one for `configure` to use a specific configuration for the created driver.
+
+```ruby
+driver = SandthornDriverSequel.driver_from_connection(url: "<sequel url string>")
+```
 
 ## Contributing
 
