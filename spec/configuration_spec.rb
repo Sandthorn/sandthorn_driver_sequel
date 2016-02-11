@@ -19,11 +19,21 @@ module SandthornDriverSequel
         expect(driver.instance_variable_get "@event_deserializer".to_sym).to be_a Proc
       end
 
+      it "should have the default snapshot_serializer" do
+        expect(driver.instance_variable_get "@snapshot_serializer".to_sym).to be_a Proc
+      end
+
+      it "should have the default snapshot_deserializer" do
+        expect(driver.instance_variable_get "@snapshot_deserializer".to_sym).to be_a Proc
+      end
+
       context "change global configuration" do
         before do
           SandthornDriverSequel.configure { |conf|
-            conf.event_serializer = :serializer_global
-            conf.event_deserializer = :deserializer_global
+            conf.event_serializer = :serializer_event_global
+            conf.event_deserializer = :deserializer_event_global
+            conf.snapshot_serializer = :serializer_snapshot_global
+            conf.snapshot_deserializer = :deserializer_snapshot_global
           }
         end
 
@@ -32,15 +42,25 @@ module SandthornDriverSequel
           SandthornDriverSequel.configure { |conf|
             conf.event_serializer = -> (data) { YAML.dump(data) }
             conf.event_deserializer = -> (data) { YAML.load(data) }
+            conf.snapshot_serializer = -> (data) { YAML.dump(data) }
+            conf.snapshot_deserializer = -> (data) { YAML.load(data) }
           }
         end
 
         it "should have the new event_serializer" do
-          expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializer_global
+          expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializer_event_global
         end
 
         it "should have the default event_deserializer" do
-          expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializer_global
+          expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializer_event_global
+        end
+
+        it "should have the new snapshot_serializer" do
+          expect(driver.instance_variable_get "@snapshot_serializer".to_sym).to eql :serializer_snapshot_global
+        end
+
+        it "should have the default snapshot_deserializer" do
+          expect(driver.instance_variable_get "@snapshot_deserializer".to_sym).to eql :deserializer_snapshot_global
         end
       end
     end
@@ -48,8 +68,10 @@ module SandthornDriverSequel
     context "session configuration" do
       let(:driver) do
         SandthornDriverSequel.driver_from_connection(connection: Sequel.sqlite) { |conf|
-          conf.event_serializer = :serializer
-          conf.event_deserializer = :deserializer
+          conf.event_serializer = :event_serializer
+          conf.event_deserializer = :event_deserializer
+          conf.snapshot_serializer = :snapshot_serializer
+          conf.snapshot_deserializer = :snapshot_deserializer
         }
       end
 
@@ -58,11 +80,19 @@ module SandthornDriverSequel
       end
 
       it "should have a configuration event_serializer" do
-        expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :serializer
+        expect(driver.instance_variable_get "@event_serializer".to_sym).to eql :event_serializer
       end
 
       it "should have a configuration event_deserializer" do
-        expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :deserializer
+        expect(driver.instance_variable_get "@event_deserializer".to_sym).to eql :event_deserializer
+      end
+
+      it "should have a configuration snapshot_serializer" do
+        expect(driver.instance_variable_get "@snapshot_serializer".to_sym).to eql :snapshot_serializer
+      end
+
+      it "should have a configuration snapshot_deserializer" do
+        expect(driver.instance_variable_get "@snapshot_deserializer".to_sym).to eql :snapshot_deserializer
       end
 
     end
