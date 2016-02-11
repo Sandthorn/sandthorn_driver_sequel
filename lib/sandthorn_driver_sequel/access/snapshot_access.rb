@@ -1,21 +1,50 @@
+require "sandthorn_driver_sequel/access"
+
 module SandthornDriverSequel
   class SnapshotAccess < Access::Base
 
+    def initialize storage, serializer, deserializer
+      @serializer = serializer
+      @deserializer = deserializer
+      super storage
+    end
+
     def find_by_aggregate_id(aggregate_id)
-      aggregate = aggregates.find_by_aggregate_id(aggregate_id)
-      storage.snapshots.first(aggregate_table_id: aggregate.id)
+      
+      aggregate_from_table = aggregates.find_by_aggregate_id(aggregate_id)
+      return nil if aggregate_from_table.nil?
+      snapshot = storage.snapshots.first(aggregate_table_id: aggregate_from_table.id)
+      if snapshot
+        aggregate = deserialize(snapshot[:snapshot_data])
+        
+        snapshot_data = {
+          aggregate: aggregate,
+          snapshot_id: snapshot.id,
+          aggregate_table_id: snapshot[:aggregate_table_id]
+        }
+        return SnapshotWrapper.new(snapshot_data)
+      end
+      
+      return nil
     end
 
     def find(snapshot_id)
-      storage.snapshots[snapshot_id]
+      
+      snapshot = storage.snapshots[snapshot_id]
+      aggregate = deserialize(snapshot[:snapshot_data])
+
+      snapshot_data = {
+        aggregate: aggregate,
+        snapshot_id: snapshot_id,
+        aggregate_table_id: snapshot[:aggregate_table_id]
+      }
+      
+      SnapshotWrapper.new(snapshot_data)
     end
 
-    def record_snapshot(aggregate_id, snapshot_data)
-      aggregate = aggregates.find_by_aggregate_id!(aggregate_id)
-      previous_snapshot = find_by_aggregate_id(aggregate_id)
-      if perform_snapshot?(aggregate, previous_snapshot)
-        perform_snapshot(aggregate, previous_snapshot, snapshot_data)
-      end
+    def record_snapshot(aggregate)
+      aggregate_from_table = aggregates.find_by_aggregate_id!(aggregate.aggregate_id)
+      perform_snapshot(aggregate, aggregate_from_table.id)
     end
 
     def obsolete(aggregate_types: [], max_event_distance: 100)
@@ -38,49 +67,38 @@ module SandthornDriverSequel
       @aggregates ||= AggregateAccess.new(storage)
     end
 
-    def perform_snapshot?(aggregate, snapshot)
-      return true if snapshot.nil?
-      snapshot = SnapshotWrapper.new(snapshot)
-      aggregate.aggregate_version > snapshot.aggregate_version
-    end
-
-    def perform_snapshot(aggregate, snapshot, snapshot_data)
-      check_snapshot_version!(aggregate, snapshot_data)
-      if valid_snapshot?(snapshot)
-        update_snapshot(snapshot, snapshot_data)
+    def perform_snapshot(aggregate, aggregate_table_id) 
+      current_snapshot = storage.snapshots.first(aggregate_table_id: aggregate_table_id)
+      snapshot = build_snapshot(aggregate)
+      if current_snapshot
+        update_snapshot(snapshot, current_snapshot.id)
       else
-        insert_snapshot(aggregate, snapshot_data)
+        insert_snapshot(snapshot, aggregate_table_id)
       end
     end
 
-    def insert_snapshot(aggregate, snapshot_data)
-      data = build_snapshot(snapshot_data)
-      data[:aggregate_table_id] = aggregate.id
-      storage.snapshots.insert(data)
-    end
-
-    def build_snapshot(snapshot_data)
-      snapshot_data = SnapshotWrapper.new(snapshot_data)
+    def build_snapshot(aggregate)
       {
-          snapshot_data:      snapshot_data.data,
-          aggregate_version:  snapshot_data.aggregate_version
+        snapshot_data:      serialize(aggregate),
+        aggregate_version:  aggregate.aggregate_version
       }
     end
 
-    def valid_snapshot?(snapshot)
-      snapshot && snapshot[:snapshot_data]
+    def insert_snapshot(snapshot, id)
+      snapshot[:aggregate_table_id] = id
+      storage.snapshots.insert(snapshot)
     end
 
-    def update_snapshot(snapshot, snapshot_data)
-      data = build_snapshot(snapshot_data)
-      storage.snapshots.where(id: snapshot.id).update(data)
+    def update_snapshot(snapshot, id)
+      storage.snapshots.where(id: id).update(snapshot)
     end
 
-    def check_snapshot_version!(aggregate, snapshot_data)
-      snapshot = SnapshotWrapper.new(snapshot_data)
-      if aggregate.aggregate_version < snapshot.aggregate_version
-        raise Errors::WrongSnapshotVersionError.new(aggregate, snapshot.aggregate_version)
-      end
+    def serialize aggregate
+      @serializer.call(aggregate)
+    end
+
+    def deserialize snapshot_data
+      @deserializer.call(snapshot_data)
     end
 
   end

@@ -1,13 +1,25 @@
+require "sandthorn_driver_sequel/access/aggregate_access"
+require "sandthorn_driver_sequel/access/event_access"
+require "sandthorn_driver_sequel/access/snapshot_access"
+require "sandthorn_driver_sequel/storage"
+
 module SandthornDriverSequel
   class EventStore
     include EventStoreContext
 
-    attr_reader :driver, :context, :url
+    attr_reader :driver, :context
 
-    def initialize url: nil, context: nil
-      @driver = SequelDriver.new url: url
+    def initialize connection, configuration, context = nil
+      @driver = connection
       @context = context
-      @url = url
+      @event_serializer = configuration.event_serializer
+      @event_deserializer = configuration.event_deserializer
+      @snapshot_serializer = configuration.snapshot_serializer
+      @snapshot_deserializer = configuration.snapshot_deserializer
+    end
+
+    def self.from_url url, configuration, context = nil
+      new(SequelDriver.new(url: url), configuration, context)
     end
 
     def save_events events, aggregate_id, class_name
@@ -26,10 +38,10 @@ module SandthornDriverSequel
       end
     end
 
-    def save_snapshot aggregate_snapshot, aggregate_id
+    def save_snapshot aggregate
       driver.execute_in_transaction do |db|
         snapshot_access = get_snapshot_access(db)
-        snapshot_access.record_snapshot(aggregate_id, aggregate_snapshot)
+        snapshot_access.record_snapshot(aggregate)
       end
     end
 
@@ -53,9 +65,7 @@ module SandthornDriverSequel
 
     def build_snapshot_event(snapshot)
       {
-          aggregate_version: snapshot[:aggregate_version],
-          event_data: snapshot[:snapshot_data],
-          event_name: "aggregate_set_from_snapshot"
+        aggregate: snapshot.data,
       }
     end
 
@@ -87,7 +97,7 @@ module SandthornDriverSequel
       driver.execute do |db|
         snapshots = get_snapshot_access(db)
         snapshot = snapshots.find_by_aggregate_id(aggregate_id)
-        transform_snapshot(snapshot)
+        snapshot.data
       end
     end
 
@@ -119,19 +129,19 @@ module SandthornDriverSequel
     end
 
     def get_aggregate_access(db)
-      AggregateAccess.new(storage(db))
+      @aggregate_access ||= AggregateAccess.new(storage(db))
     end
 
     def get_event_access(db)
-      EventAccess.new(storage(db))
+      @event_access ||= EventAccess.new(storage(db), @event_serializer, @event_deserializer)
     end
 
     def get_snapshot_access(db)
-      SnapshotAccess.new(storage(db))
+      @snapshot_access ||= SnapshotAccess.new(storage(db), @snapshot_serializer, @snapshot_deserializer)
     end
 
     def storage(db)
-      Storage.new(db, context)
+      @storage ||= Storage.new(db, @context)
     end
 
   end

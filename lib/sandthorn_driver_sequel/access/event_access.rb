@@ -1,7 +1,15 @@
+require "sandthorn_driver_sequel/access"
+
 module SandthornDriverSequel
   class EventAccess < Access::Base
     # = EventAccess
     # Reads and writes events.
+
+    def initialize storage, serializer, deserializer
+      @serializer = serializer
+      @deserializer = deserializer
+      super storage
+    end
 
     def store_events(aggregate, events)
       events = Utilities.array_wrap(events)
@@ -48,16 +56,25 @@ module SandthornDriverSequel
 
     def wrap(arg)
       events = Utilities.array_wrap(arg)
+      events.each { |e| e[:event_args] = deserialize(e[:event_data]) }
       events.map { |e| EventWrapper.new(e.values) }
+    end
+
+    def deserialize event_data
+      @deserializer.call(event_data)
+    end
+
+    def serialize event_args
+      @serializer.call(event_args)
     end
 
     def build_event_data(aggregate, timestamp, event)
       {
-          aggregate_table_id: aggregate.id,
-          aggregate_version: aggregate.aggregate_version,
-          event_name: event.event_name,
-          event_data: event.event_data,
-          timestamp: timestamp
+        aggregate_table_id: aggregate.id,
+        aggregate_version: aggregate.aggregate_version,
+        event_name: event.event_name,
+        event_data: serialize(event.event_args),
+        timestamp: timestamp
       }
     end
 
