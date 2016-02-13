@@ -63,6 +63,12 @@ module SandthornDriverSequel
       end
     end
 
+    def all aggregate_type
+      return get_aggregate_ids(aggregate_type: aggregate_type).map do |id|
+        get_aggregate_events_from_snapshot(id)
+      end
+    end
+
     def build_snapshot_event(snapshot)
       {
         aggregate: snapshot.data,
@@ -74,6 +80,8 @@ module SandthornDriverSequel
       get_aggregate_events_from_snapshot(aggregate_id)
     end
 
+    
+
     def get_aggregate_ids(aggregate_type: nil)
       driver.execute do |db|
         access = get_aggregate_access(db)
@@ -83,7 +91,7 @@ module SandthornDriverSequel
 
     def get_aggregate_list_by_typename(type)
       warn(":get_aggregate_list_by_typenames is deprecated. Use :get_aggregate_ids")
-      get_aggregate_ids(type: type)
+      get_aggregate_ids(aggregate_type: type)
     end
 
     def get_all_types
