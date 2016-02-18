@@ -17,7 +17,8 @@ module SandthornDriverSequel
         :get_events,
         :context,
         :driver,
-        :all
+        :all,
+        :find
       ]
 
       methods.each do |method|
