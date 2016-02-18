@@ -22,6 +22,7 @@ module SandthornDriverSequel
       new(SequelDriver.new(url: url), configuration, context)
     end
 
+    #save methods
     def save_events events, aggregate_id, class_name
       driver.execute_in_transaction do |db|
         aggregates = get_aggregate_access(db)
@@ -31,17 +32,29 @@ module SandthornDriverSequel
       end
     end
 
-    def get_aggregate_events(aggregate_id)
-      driver.execute do |db|
-        events = get_event_access(db)
-        events.find_events_by_aggregate_id(aggregate_id)
-      end
-    end
-
     def save_snapshot aggregate
       driver.execute_in_transaction do |db|
         snapshot_access = get_snapshot_access(db)
         snapshot_access.record_snapshot(aggregate)
+      end
+    end
+
+    #get methods
+    def all aggregate_type
+      return get_aggregate_ids(aggregate_type: aggregate_type).map do |id|
+        get_aggregate_events_from_snapshot(id)
+      end
+    end
+
+    def find aggregate_id
+      get_aggregate_events_from_snapshot(aggregate_id)
+    end
+
+    
+    def get_aggregate_events(aggregate_id)
+      driver.execute do |db|
+        events = get_event_access(db)
+        events.find_events_by_aggregate_id(aggregate_id)
       end
     end
 
@@ -63,17 +76,9 @@ module SandthornDriverSequel
       end
     end
 
-    def all aggregate_type
-      return get_aggregate_ids(aggregate_type: aggregate_type).map do |id|
-        get_aggregate_events_from_snapshot(id)
-      end
-    end
 
-    def build_snapshot_event(snapshot)
-      {
-        aggregate: snapshot.data,
-      }
-    end
+
+    
 
     def get_aggregate aggregate_id, *class_name
       warn(":get_aggregate is deprecated. Use :get_aggregate_events_from_snapshot")
@@ -128,6 +133,12 @@ module SandthornDriverSequel
     end
 
     private
+
+    def build_snapshot_event(snapshot)
+      {
+        aggregate: snapshot.data,
+      }
+    end
 
     def transform_snapshot(snapshot)
       {
