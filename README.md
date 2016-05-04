@@ -51,6 +51,22 @@ Creates a driver from a Sequel url. Its possible to send in a block like the one
 driver = SandthornDriverSequel.driver_from_connection(url: "<sequel url string>")
 ```
 
+### `SandthornDriverSequel.migrate_url`
+
+Migrate the database based on a url string
+
+```ruby
+SandthornDriverSequel.migrate_url(url: "<sequel url string>")
+```
+
+### `SandthornDriverSequel.migrate_connection`
+
+Migrate the database based on a connection
+
+```ruby
+SandthornDriverSequel.migrate_connection(connection: "<sequel connection>")
+```
+
 ## Contributing
 
 1. Fork it
