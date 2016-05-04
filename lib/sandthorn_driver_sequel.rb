@@ -20,7 +20,7 @@ module SandthornDriverSequel
       Migration.new(url: url, context: context).migrate!
     end
 
-    def migrate_connection connection:, context: nil
+    def migrate_connection connection: nil, context: nil
       Migration.new(connection: connection, context: context).migrate!
     end
 
