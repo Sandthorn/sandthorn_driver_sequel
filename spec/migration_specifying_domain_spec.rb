@@ -31,5 +31,13 @@ module SandthornDriverSequel
         check_tables context
       end
     end
+
+    context "when migrating a connection" do
+      let(:migration) { Migration.new connection: Sequel.sqlite, context: context }
+      let(:context) { :some_domain }
+      it "should create the tables events, aggregates and snapshots" do
+        check_tables context
+      end
+    end
   end
 end

@@ -10,10 +10,18 @@ require 'yaml'
 
 module SandthornDriverSequel
   class << self
-    
+
     def migrate_db url: nil, context: nil
       migrator = Migration.new url: url, context: context
       migrator.migrate!
+    end
+
+    def migrate_url url: nil, context: nil
+      Migration.new(url: url, context: context).migrate!
+    end
+
+    def migrate_connection connection:, context: nil
+      Migration.new(connection: connection, context: context).migrate!
     end
 
     def driver_from_url url: nil, context: nil
@@ -100,7 +108,7 @@ module SandthornDriverSequel
         -> (data) { YAML.load(data) }
       end
 
-      
+
     end
   end
 end
