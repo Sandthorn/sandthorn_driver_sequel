@@ -5,8 +5,8 @@ module SandthornDriverSequel
   describe EventStore do
     before(:each) { prepare_for_test }
     let(:aggregate_id) { @id ||= UUIDTools::UUID.random_create.to_s }
-    let(:test_events) { [{aggregate_version: 1, event_data: nil, event_name: "new"},{aggregate_version: 2, event_data: nil, event_name: "foo"}] } 
-    let(:additional_events) { [{aggregate_version: 3, event_data: nil, event_name: "klopp"},{aggregate_version: 4, event_data: nil, event_name: "flipp"}] } 
+    let(:test_events) { [{aggregate_version: 1, event_data: nil, event_name: "new", event_meta_data: nil},{aggregate_version: 2, event_data: nil, event_name: "foo", event_meta_data: nil}] } 
+    let(:additional_events) { [{aggregate_version: 3, event_data: nil, event_name: "klopp", event_meta_data: nil},{aggregate_version: 4, event_data: nil, event_name: "flipp", event_meta_data: nil}] } 
     let(:aggregate) { Struct::AggregateMock.new aggregate_id, 2 }
     let(:save_snapshot) { event_store.save_snapshot aggregate }
     let(:save_events) { event_store.save_events test_events, aggregate_id, Struct::AggregateMock }

@@ -8,9 +8,9 @@ module SandthornDriverSequel
     describe("when getting the same data from find and get_aggregate_events_from_snapshot") do
       let(:test_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new",  event_data: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id}]}}
-        e << {aggregate_version: 2, event_name: "foo",  event_data: "noop"}
-        e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop"}
+        e << {aggregate_version: 1, event_name: "new",  event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id}]}, event_meta_data: nil}
+        e << {aggregate_version: 2, event_name: "foo",  event_data: "noop", event_meta_data: nil}
+        e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop", event_meta_data: nil}
       end
       let(:aggregate_id) {"c0456e26-e29a-4f67-92fa-130b3a31a39b"}
       
@@ -41,9 +41,9 @@ module SandthornDriverSequel
 
         let(:test_events_2) do
           e = [] 
-          e << {aggregate_version: 1, event_name: "new",  event_data: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id_2}]}}
-          e << {aggregate_version: 2, event_name: "foo",  event_data: "noop"}
-          e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop"}
+          e << {aggregate_version: 1, event_name: "new",  event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id_2}]}, event_meta_data: nil}
+          e << {aggregate_version: 2, event_name: "foo",  event_data: "noop", event_meta_data: nil}
+          e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop", event_meta_data: nil}
         end
         let(:aggregate_id_2) {"d0456e26-e29a-4f67-92fa-130b3a31a39b"}
 

@@ -32,6 +32,7 @@ module SandthornDriverSequel
           aggregate_version,
           :event_name,
           :event_data,
+          :event_meta_data,
           :timestamp)
         .order(:sequence_number)
         .all)
@@ -56,12 +57,15 @@ module SandthornDriverSequel
 
     def wrap(arg)
       events = Utilities.array_wrap(arg)
-      events.each { |e| e[:event_data] = deserialize(e[:event_data]) }
+      events.each { |e| 
+        e[:event_data] = deserialize(e[:event_data])
+        e[:event_meta_data] = deserialize(e[:event_meta_data])
+      }
       events.map { |e| EventWrapper.new(e.values) }
     end
 
     def deserialize event_data
-      @deserializer.call(event_data)
+      event_data ? @deserializer.call(event_data) : nil
     end
 
     def serialize event_data
@@ -74,6 +78,7 @@ module SandthornDriverSequel
         aggregate_version: aggregate.aggregate_version,
         event_name: event.event_name,
         event_data: serialize(event.event_data),
+        event_meta_data: serialize(event.event_meta_data),
         timestamp: timestamp
       }
     end
