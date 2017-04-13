@@ -56,7 +56,7 @@ module SandthornDriverSequel
 
     def wrap(arg)
       events = Utilities.array_wrap(arg)
-      events.each { |e| e[:event_args] = deserialize(e[:event_data]) }
+      events.each { |e| e[:event_data] = deserialize(e[:event_data]) }
       events.map { |e| EventWrapper.new(e.values) }
     end
 
@@ -64,8 +64,8 @@ module SandthornDriverSequel
       @deserializer.call(event_data)
     end
 
-    def serialize event_args
-      @serializer.call(event_args)
+    def serialize event_data
+      @serializer.call(event_data)
     end
 
     def build_event_data(aggregate, timestamp, event)
@@ -73,7 +73,7 @@ module SandthornDriverSequel
         aggregate_table_id: aggregate.id,
         aggregate_version: aggregate.aggregate_version,
         event_name: event.event_name,
-        event_data: serialize(event.event_args),
+        event_data: serialize(event.event_data),
         timestamp: timestamp
       }
     end

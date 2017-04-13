@@ -46,7 +46,7 @@ module SandthornDriverSequel
       end
     end
 
-    def find aggregate_id
+    def find aggregate_id, aggregate_type
       get_aggregate_events_from_snapshot(aggregate_id)
     end
 

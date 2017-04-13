@@ -8,9 +8,9 @@ module SandthornDriverSequel
     describe("when getting the same data from find and get_aggregate_events_from_snapshot") do
       let(:test_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new",  event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id}]}}
-        e << {aggregate_version: 2, event_name: "foo",  event_args: "noop"}
-        e << {aggregate_version: 3, event_name: "flubber",  event_args: "noop"}
+        e << {aggregate_version: 1, event_name: "new",  event_data: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id}]}}
+        e << {aggregate_version: 2, event_name: "foo",  event_data: "noop"}
+        e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop"}
       end
       let(:aggregate_id) {"c0456e26-e29a-4f67-92fa-130b3a31a39b"}
       
@@ -23,7 +23,7 @@ module SandthornDriverSequel
       context "find" do
 
         let(:find_events) do
-          event_store.find aggregate_id
+          event_store.find aggregate_id, "String"
         end
 
         let(:get_aggregate_events_from_snapshot_events) do
@@ -41,9 +41,9 @@ module SandthornDriverSequel
 
         let(:test_events_2) do
           e = [] 
-          e << {aggregate_version: 1, event_name: "new",  event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id_2}]}}
-          e << {aggregate_version: 2, event_name: "foo",  event_args: "noop"}
-          e << {aggregate_version: 3, event_name: "flubber",  event_args: "noop"}
+          e << {aggregate_version: 1, event_name: "new",  event_data: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>aggregate_id_2}]}}
+          e << {aggregate_version: 2, event_name: "foo",  event_data: "noop"}
+          e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop"}
         end
         let(:aggregate_id_2) {"d0456e26-e29a-4f67-92fa-130b3a31a39b"}
 
