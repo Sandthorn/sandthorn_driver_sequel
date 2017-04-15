@@ -55,21 +55,10 @@ module SandthornDriverSequel
           event_store.all String
         end
 
-        let(:obsolete_all) do
-          return event_store.get_aggregate_ids(aggregate_type: String).map do |id|
-            event_store.get_aggregate_events_from_snapshot(id)
-          end
-        end
-
         it "should get two arrays of events" do
           expect(all_events.length).to eql 2
         end
 
-        it "should get same events" do
-          all_events.each_with_index do |events, index|
-            expect(events).to eql obsolete_all[index]
-          end
-        end
       end
     end
   end

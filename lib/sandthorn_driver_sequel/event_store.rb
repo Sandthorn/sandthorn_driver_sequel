@@ -75,23 +75,10 @@ module SandthornDriverSequel
         end
       end
     end
-
-
-
     
-
     def get_aggregate aggregate_id, *class_name
       warn(":get_aggregate is deprecated. Use :get_aggregate_events_from_snapshot")
       get_aggregate_events_from_snapshot(aggregate_id)
-    end
-
-    
-
-    def get_aggregate_ids(aggregate_type: nil)
-      driver.execute do |db|
-        access = get_aggregate_access(db)
-        access.aggregate_ids(aggregate_type: aggregate_type)
-      end
     end
 
     def get_aggregate_list_by_typename(type)
@@ -119,6 +106,13 @@ module SandthornDriverSequel
     end
 
     private
+
+    def get_aggregate_ids(aggregate_type: nil)
+      driver.execute do |db|
+        access = get_aggregate_access(db)
+        access.aggregate_ids(aggregate_type: aggregate_type)
+      end
+    end
 
     def build_snapshot_event(snapshot)
       {

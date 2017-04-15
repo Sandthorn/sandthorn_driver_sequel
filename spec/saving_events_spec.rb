@@ -54,11 +54,11 @@ module SandthornDriverSequel
         event_store.save_events test_events_2, aggregate_id_3, String
       end
 
-      it "should list the aggregate ids when asking for get_aggregate_list_by_typename" do
-        ids = event_store.get_aggregate_ids(aggregate_type: String)
-        expect(ids.length).to eql 2
-        expect(ids.any? { |e| e == aggregate_id_1 }).to be_truthy
-        expect(ids.any? { |e| e == aggregate_id_3 }).to be_truthy
+      it "should get the correct aggregate_id in events when asking for all" do
+        aggregate_events = event_store.all(String)
+        expect(aggregate_events.length).to eql 2
+        expect(aggregate_events.first.any? { |e| e[:aggregate_id] == aggregate_id_1 }).to be_truthy
+        expect(aggregate_events.last.any? { |e| e[:aggregate_id] == aggregate_id_3 }).to be_truthy
       end
     end
 
