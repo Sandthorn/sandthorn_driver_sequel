@@ -84,45 +84,6 @@ module SandthornDriverSequel
         end
       end
     end
-    context "when using :get_new_events_after_event_id_matching_classname to get events" do
-      context "and getting events for SandthornDriverSequel::EventStore after 0" do
-        let(:events) {event_store.get_new_events_after_event_id_matching_classname 0, SandthornDriverSequel::EventStore}
-        it "should find 3 events" do
-          expect(events.length).to eql 3
-        end
-        it "should be in sequence_number order" do
-          check = 0
-          events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
-        end
-        it "should contain only events for aggregate_id_a" do
-          events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
-        end
-        it "should be able to get events after a sequence number" do
-          new_from = events[1][:sequence_number]
-          ev = event_store.get_new_events_after_event_id_matching_classname new_from, SandthornDriverSequel::EventStore
-          expect(ev.last[:aggregate_version]).to eql 3
-          expect(ev.length).to eql 1
-        end
-        it "should be able to limit the number of results" do
-          ev = event_store.get_new_events_after_event_id_matching_classname 0, SandthornDriverSequel::EventStore, take: 2
-          expect(ev.length).to eql 2
-          expect(ev.last[:aggregate_version]).to eql 2
-        end
-      end
-      context "and getting events for String after 0" do
-        let(:events) {event_store.get_new_events_after_event_id_matching_classname 0, "String"}
-        it "should find 3 events" do
-          expect(events.length).to eql 2
-        end
-        it "should be in sequence_number order" do
-          check = 0
-          events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
-        end
-        it "should contain only events for aggregate_id_c" do
-          events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_c  }
-        end
-      end
-    end
-
+  
   end
 end

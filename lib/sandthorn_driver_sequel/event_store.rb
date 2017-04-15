@@ -83,10 +83,6 @@ module SandthornDriverSequel
       end
     end
 
-    def get_new_events_after_event_id_matching_classname event_id, class_name, take: 0
-      get_events(after_sequence_number: event_id, aggregate_types: Utilities.array_wrap(class_name), take: take)
-    end
-
     private
 
     def get_aggregate_ids(aggregate_type: nil)
