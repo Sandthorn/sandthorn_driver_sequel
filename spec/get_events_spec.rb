@@ -5,8 +5,8 @@ module SandthornDriverSequel
     before(:each) { prepare_for_test }
     let(:test_events_a) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_meta_data: "1"}
-      e << {aggregate_version: 2, event_name: "foo", event_data: "A2", event_meta_data: [1,2,3]}
+      e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_meta_data: {a: 1}}
+      e << {aggregate_version: 2, event_name: "foo", event_data: "A2", event_meta_data: {a: 1}}
       e << {aggregate_version: 3, event_name: "bard", event_data: "A3", event_meta_data: {a: 1}}
     end
     let(:aggregate_id_a) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
@@ -81,6 +81,10 @@ module SandthornDriverSequel
         end
         it "should contain only events for aggregate_id_a" do
           events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
+        end
+
+        it "shoul have correct event_meta_data" do
+          events.each { |e| expect(e[:event_meta_data]).to eql ({a: 1})  }
         end
       end
     end
