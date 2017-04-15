@@ -125,13 +125,6 @@ module SandthornDriverSequel
       get_events(after_sequence_number: event_id, aggregate_types: Utilities.array_wrap(class_name), take: take)
     end
 
-    def obsolete_snapshots(*args)
-      driver.execute do |db|
-        snapshots = get_snapshot_access(db)
-        snapshots.obsolete(*args)
-      end
-    end
-
     private
 
     def build_snapshot_event(snapshot)
