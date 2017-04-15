@@ -15,9 +15,9 @@ module SandthornDriverSequel
       let(:aggregate_id) {"c0456e26-e29a-4f67-92fa-130b3a31a39b"}
       it "should not find them" do
         event_store_without_context.save_events test_events, aggregate_id, String
-        events = event_store_without_context.get_aggregate_events aggregate_id
+        events = event_store_without_context.find aggregate_id, String
         expect(events.length).to eql test_events.length
-        events_2 = event_store_with_context.get_aggregate_events aggregate_id
+        events_2 = event_store_with_context.find aggregate_id, String
         expect(events_2.length).to eql 0
       end
     end

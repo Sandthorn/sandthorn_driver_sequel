@@ -10,7 +10,6 @@ module SandthornDriverSequel
         :save_snapshot,
         :get_aggregate_events_from_snapshot,
         :get_aggregate,
-        :get_aggregate_events,
         :get_snapshot,
         :get_events,
         :context,

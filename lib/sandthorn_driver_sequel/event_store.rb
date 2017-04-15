@@ -50,14 +50,6 @@ module SandthornDriverSequel
       get_aggregate_events_from_snapshot(aggregate_id)
     end
 
-    
-    def get_aggregate_events(aggregate_id)
-      driver.execute do |db|
-        events = get_event_access(db)
-        events.find_events_by_aggregate_id(aggregate_id)
-      end
-    end
-
     # If the aggregate has a snapshot, return events starting from the snapshots.
     # Otherwise, return all events.
     # TODO: needs a better name

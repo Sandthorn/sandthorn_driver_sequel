@@ -15,13 +15,13 @@ module SandthornDriverSequel
 
       it "should be able to save and retrieve events on the aggregate" do
         event_store.save_events test_events, aggregate_id, String
-        events = event_store.get_aggregate_events aggregate_id
+        events = event_store.find aggregate_id, String
         expect(events.length).to eql test_events.length
       end
 
       it "should have correct keys when asking for events" do
         event_store.save_events test_events, aggregate_id, String
-        events = event_store.get_aggregate aggregate_id, String
+        events = event_store.find aggregate_id, String
         event = events.first
         expect(event[:event_data]).to eql(test_events.first[:event_data])
         expect(event[:event_meta_data]).to eql(test_events.first[:event_meta_data])
@@ -74,7 +74,7 @@ module SandthornDriverSequel
 
       it "should be able to save and retrieve events on the aggregate" do
         event_store.save_events test_events, aggregate_id, String
-        events = event_store.get_aggregate_events aggregate_id
+        events = event_store.find aggregate_id, String
         expect(events.length).to eql test_events.length
       end
 
