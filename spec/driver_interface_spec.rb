@@ -12,7 +12,6 @@ module SandthornDriverSequel
         :get_aggregate,
         :get_aggregate_events,
         :get_aggregate_ids,
-        :get_all_types,
         :get_snapshot,
         :get_events,
         :context,

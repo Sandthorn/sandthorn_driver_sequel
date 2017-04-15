@@ -62,16 +62,6 @@ module SandthornDriverSequel
       end
     end
 
-    describe "#aggregate_types" do
-      it "returns all aggregate types in the event store" do
-        types = ["foo", "bar", "qux"]
-        types.each do |type|
-          access.register_aggregate(generate_uuid, type)
-        end
-        expect(access.aggregate_types).to eq(types.sort)
-      end
-    end
-
     describe "#aggregate_ids" do
       context "when given no argument" do
         it "returns all aggregate ids" do
