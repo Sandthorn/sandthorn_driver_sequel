@@ -11,14 +11,14 @@ module SandthornDriverSequel
     let(:save_snapshot) { event_store.save_snapshot aggregate }
     let(:save_events) { event_store.save_events test_events, aggregate_id, Struct::AggregateMock }
     let(:save_additional_events) { event_store.save_events additional_events, aggregate_id, Struct::AggregateMock }
-    context "when loading an aggregate using get_aggregate" do
+    context "when loading an aggregate using find" do
       context "and it has a snapshot" do
         before(:each) do
           save_events
           save_snapshot
           save_additional_events
         end
-        let(:events) { event_store.get_aggregate aggregate_id, Struct::AggregateMock }
+        let(:events) { event_store.find aggregate_id, Struct::AggregateMock }
         it "should have the first event as :aggregate_set_from_snapshot" do
           expect(events.first[:aggregate]).to eql aggregate
         end

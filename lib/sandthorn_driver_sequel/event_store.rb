@@ -67,11 +67,6 @@ module SandthornDriverSequel
         end
       end
     end
-    
-    def get_aggregate aggregate_id, *class_name
-      warn(":get_aggregate is deprecated. Use :get_aggregate_events_from_snapshot")
-      get_aggregate_events_from_snapshot(aggregate_id)
-    end
 
     def get_aggregate_list_by_typename(type)
       warn(":get_aggregate_list_by_typenames is deprecated. Use :get_aggregate_ids")
