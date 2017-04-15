@@ -6,7 +6,7 @@ module SandthornDriverSequel
     context "when saving a prefectly sane event stream" do
       let(:test_events) do
         e = []
-        e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_meta_data: nil}
+        e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_meta_data: [1,2,3]}
         e << {aggregate_version: 2, event_name: "foo", event_data: "noop", event_meta_data: nil}
         e << {aggregate_version: 3, event_name: "flubber", event_data: "noop", event_meta_data: nil}
       end
@@ -24,6 +24,7 @@ module SandthornDriverSequel
         events = event_store.get_aggregate aggregate_id, String
         event = events.first
         expect(event[:event_data]).to eql(test_events.first[:event_data])
+        expect(event[:event_meta_data]).to eql(test_events.first[:event_meta_data])
         expect(event[:event_name]).to eql("new")
         expect(event[:aggregate_id]).to eql aggregate_id
         expect(event[:aggregate_version]).to eql 1
