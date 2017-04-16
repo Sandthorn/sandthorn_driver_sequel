@@ -83,32 +83,6 @@ module SandthornDriverSequel
         -> (data) { YAML.load(data) }
       end
 
-      #snapshot
-      def snapshot_serializer=(block)
-        @snapshot_serializer = block
-      end
-
-      def snapshot_deserializer=(block)
-        @snapshot_deserializer = block
-      end
-
-      def snapshot_serializer
-        @snapshot_serializer || default_snapshot_serializer
-      end
-
-      def snapshot_deserializer
-        @snapshot_deserializer || default_snapshot_deserializer
-      end
-
-      def default_snapshot_serializer
-        -> (data) { YAML.dump(data) }
-      end
-
-      def default_snapshot_deserializer
-        -> (data) { YAML.load(data) }
-      end
-
-
     end
   end
 end

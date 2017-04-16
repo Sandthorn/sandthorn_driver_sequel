@@ -38,15 +38,6 @@ module SandthornDriverSequel
         .all)
     end
 
-    # Returns events that occurred after the given snapshot
-    def after_snapshot(snapshot)
-      _aggregate_version = snapshot.aggregate_version
-      aggregate_table_id = snapshot.aggregate_table_id
-      wrap(storage.events
-        .where(aggregate_table_id: aggregate_table_id)
-        .where { aggregate_version > _aggregate_version }.all)
-    end
-
     def get_events(*args)
       query_builder = EventQuery.new(storage)
       query_builder.build(*args)

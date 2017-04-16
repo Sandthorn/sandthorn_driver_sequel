@@ -7,9 +7,6 @@ module SandthornDriverSequel
       let(:subject) { event_store }
       methods = [
         :save_events,
-        :save_snapshot,
-        :get_aggregate_events_from_snapshot,
-        :get_snapshot,
         :get_events,
         :context,
         :driver,

@@ -72,36 +72,7 @@ module Sandthorn
         end
 
       end
-       describe "find with snapshot" do
-
-        it "should find one event that is snapshoted 500 times" do
-          snapshot_data = { event_data: YAML.dump(Object.new), aggregate_version: 1 } 
-          es.save_events(test_events_one_event, 0, aggregate_id, SandthornDriverSequel::EventStore)
-          es.save_snapshot(snapshot_data, aggregate_id, SandthornDriverSequel::EventStore)
-
-          Benchmark.bm do |x|
-            x.report("find") { for i in 1..n; es.get_aggregate(aggregate_id, SandthornDriverSequel::EventStore);  end }
-          end
-        end
-        it "should find two events that is snapshoted 500 times" do
-          snapshot_data = { event_data: YAML.dump(Object.new), aggregate_version: 2 } 
-          es.save_events(test_events_two_events, 0, aggregate_id, SandthornDriverSequel::EventStore)
-          es.save_snapshot(snapshot_data, aggregate_id, SandthornDriverSequel::EventStore)
-          Benchmark.bm do |x|
-            x.report("find") { for i in 1..n; es.get_aggregate(aggregate_id, SandthornDriverSequel::EventStore);  end }
-          end
-        end
-        it "should find twenty events that is snapshoted 500 times" do
-          snapshot_data = { event_data: YAML.dump(Object.new), aggregate_version: 19 } 
-          es.save_events(test_events_20_events, 0, aggregate_id, SandthornDriverSequel::EventStore)
-          es.save_snapshot(snapshot_data, aggregate_id, SandthornDriverSequel::EventStore)
-
-          Benchmark.bm do |x|
-            x.report("find") { for i in 1..n; es.get_aggregate(aggregate_id, SandthornDriverSequel::EventStore);  end }
-          end
-        end
-
-      end
+       
       # it "new save and find 500 aggregates" do
 
       #   Benchmark.bm do |x|

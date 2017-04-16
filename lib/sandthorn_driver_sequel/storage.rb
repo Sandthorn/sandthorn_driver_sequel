@@ -25,21 +25,12 @@ module SandthornDriverSequel
       Class.new(Sequel::Model(events_table))
     end
 
-    # Returns a Sequel::Model for accessing snapshots
-    def snapshots
-      Class.new(Sequel::Model(snapshots_table))
-    end
-
     def aggregates_table
       db[aggregates_table_name]
     end
 
     def events_table
       db[events_table_name]
-    end
-
-    def snapshots_table
-      db[snapshots_table_name]
     end
 
   end

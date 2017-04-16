@@ -17,7 +17,6 @@ module SandthornDriverSequel
     private
     def clear_for_test
       driver.execute do |db|
-        db[snapshots_table_name].truncate
         db[events_table_name].truncate
         db[aggregates_table_name].truncate
       end
@@ -89,11 +88,11 @@ module SandthornDriverSequel
       end
     end
     def snapshots
-      snapshot_migration_0 = "#{snapshots_table_name}-20130312"
+      snapshot_migration_0 = "#{:snapshots}-20130312"
       unless has_been_migrated?(snapshot_migration_0)
         driver.execute_in_transaction do |db|
           aggr_table = aggregates_table_name
-          db.create_table(snapshots_table_name) do
+          db.create_table(:snapshots) do
             primary_key :id
             Integer :aggregate_version, null: false
             String :snapshot_data, text: true, null: false
@@ -102,6 +101,14 @@ module SandthornDriverSequel
           end
           was_migrated snapshot_migration_0, db
         end
+      end
+      snapshot_migration_1 = "#{:snapshots}-20170416"
+      unless has_been_migrated?(snapshot_migration_1)
+        driver.execute_in_transaction do |db|
+          db.drop_table?(:snapshots)
+          was_migrated snapshot_migration_1, db
+        end
+
       end
     end
 
