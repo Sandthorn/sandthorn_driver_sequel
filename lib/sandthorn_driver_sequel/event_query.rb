@@ -48,7 +48,7 @@ module SandthornDriverSequel
         :sequence_number,
         :event_name,
         :event_data,
-        :event_meta_data,
+        :event_metadata,
         :timestamp
       ]
     end

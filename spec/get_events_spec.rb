@@ -5,25 +5,25 @@ module SandthornDriverSequel
     before(:each) { prepare_for_test }
     let(:test_events_a) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_meta_data: {a: 1}}
-      e << {aggregate_version: 2, event_name: "foo", event_data: "A2", event_meta_data: {a: 1}}
-      e << {aggregate_version: 3, event_name: "bard", event_data: "A3", event_meta_data: {a: 1}}
+      e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_metadata: {a: 1}}
+      e << {aggregate_version: 2, event_name: "foo", event_data: "A2", event_metadata: {a: 1}}
+      e << {aggregate_version: 3, event_name: "bard", event_data: "A3", event_metadata: {a: 1}}
     end
     let(:aggregate_id_a) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
     let(:test_events_b) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_data: "B1", event_meta_data: 1}
-      e << {aggregate_version: 2, event_name: "foo", event_data: "B2", event_meta_data: 2}
-      e << {aggregate_version: 3, event_name: "bar", event_data: "B3", event_meta_data: 3}
+      e << {aggregate_version: 1, event_name: "new", event_data: "B1", event_metadata: 1}
+      e << {aggregate_version: 2, event_name: "foo", event_data: "B2", event_metadata: 2}
+      e << {aggregate_version: 3, event_name: "bar", event_data: "B3", event_metadata: 3}
     end
     let(:aggregate_id_b) {"c0456e26-1234-4f67-92fa-130b3a31a39a"}
     let(:test_events_c) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_data: "C1", event_meta_data: 4}
+      e << {aggregate_version: 1, event_name: "new", event_data: "C1", event_metadata: 4}
     end
     let(:test_events_c_2) do
       e = []
-      e << {aggregate_version: 2, event_name: "flubber", event_data: "C2", event_meta_data: 6}
+      e << {aggregate_version: 2, event_name: "flubber", event_data: "C2", event_metadata: 6}
     end
     let(:aggregate_id_c) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
     before(:each) do
@@ -83,8 +83,8 @@ module SandthornDriverSequel
           events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
         end
 
-        it "shoul have correct event_meta_data" do
-          events.each { |e| expect(e[:event_meta_data]).to eql ({a: 1})  }
+        it "shoul have correct event_metadata" do
+          events.each { |e| expect(e[:event_metadata]).to eql ({a: 1})  }
         end
       end
     end

@@ -27,12 +27,12 @@ module SandthornDriverSequel
           aggregate_version: 1,
           event_name: "new",
           event_data: "new_data",
-          event_meta_data: nil
+          event_metadata: nil
         },{
           aggregate_version: 2,
           event_name: "foo",
           event_data: "foo_data",
-          event_meta_data: nil
+          event_metadata: nil
         }
       ]
     end

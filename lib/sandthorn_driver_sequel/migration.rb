@@ -77,11 +77,11 @@ module SandthornDriverSequel
         end
       end
 
-      events_migration_2 = "#{events_table_name}-20170413"
+      events_migration_2 = "#{events_table_name}-20170514"
       unless has_been_migrated?(events_migration_2)
         driver.execute_in_transaction do |db|
           db.alter_table events_table_name do
-            add_column :event_meta_data, String, text: true, null: true
+            add_column :event_metadata, String, text: true, null: true
           end
           was_migrated events_migration_2, db
         end
