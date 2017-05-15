@@ -23,7 +23,7 @@ module SandthornDriverSequel
     def find_events_by_aggregate_id(aggregate_id)
       aggregate_version = Sequel.qualify(storage.events_table_name, :aggregate_version)
       wrap(storage.events
-        .join(storage.aggregates, id: :aggregate_table_id)
+        .join(storage.aggregates_table_name, id: :aggregate_table_id)
         .where(aggregate_id: aggregate_id)
         .select(
           :sequence_number,
