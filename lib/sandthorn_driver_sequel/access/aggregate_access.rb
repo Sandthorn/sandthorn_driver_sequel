@@ -34,10 +34,6 @@ module SandthornDriverSequel
       aggregate
     end
 
-    def aggregate_types
-      storage.aggregates.select(:aggregate_type).distinct.select_map(:aggregate_type)
-    end
-
     # Returns aggregate ids.
     # @param aggregate_type, optional,
     def aggregate_ids(aggregate_type: nil)

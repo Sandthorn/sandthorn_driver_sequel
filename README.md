@@ -22,16 +22,14 @@ Or install it yourself as:
 
 ### `SandthornDriverSequel.configure`
 
-Change the global configuration, the default data serialization for events and snapshots are YAML.
+Change the global configuration, the default data serialization for events are YAML.
 
-Change the serialization of events and snapshots to Oj.
+Change the serialization of events to Oj.
 
 ```ruby
 SandthornDriverSequel.configure { |conf|
   conf.event_serializer = Proc.new { |data| Oj::dump(data) }
   conf.event_deserializer = Proc.new { |data| Oj::load(data) }
-  conf.snapshot_serializer = Proc.new { |data| Oj::dump(data) }
-  conf.snapshot_deserializer = Proc.new { |data| Oj::dump(data) }
 }
 ```
 

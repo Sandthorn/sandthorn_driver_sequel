@@ -23,7 +23,7 @@ module SandthornDriverSequel
     def find_events_by_aggregate_id(aggregate_id)
       aggregate_version = Sequel.qualify(storage.events_table_name, :aggregate_version)
       wrap(storage.events
-        .join(storage.aggregates, id: :aggregate_table_id)
+        .join(storage.aggregates_table_name, id: :aggregate_table_id)
         .where(aggregate_id: aggregate_id)
         .select(
           :sequence_number,
@@ -32,18 +32,10 @@ module SandthornDriverSequel
           aggregate_version,
           :event_name,
           :event_data,
+          :event_metadata,
           :timestamp)
         .order(:sequence_number)
         .all)
-    end
-
-    # Returns events that occurred after the given snapshot
-    def after_snapshot(snapshot)
-      _aggregate_version = snapshot.aggregate_version
-      aggregate_table_id = snapshot.aggregate_table_id
-      wrap(storage.events
-        .where(aggregate_table_id: aggregate_table_id)
-        .where { aggregate_version > _aggregate_version }.all)
     end
 
     def get_events(*args)
@@ -56,16 +48,19 @@ module SandthornDriverSequel
 
     def wrap(arg)
       events = Utilities.array_wrap(arg)
-      events.each { |e| e[:event_args] = deserialize(e[:event_data]) }
+      events.each { |e| 
+        e[:event_data] = deserialize(e[:event_data])
+        e[:event_metadata] = deserialize(e[:event_metadata])
+      }
       events.map { |e| EventWrapper.new(e.values) }
     end
 
     def deserialize event_data
-      @deserializer.call(event_data)
+      event_data ? @deserializer.call(event_data) : nil
     end
 
-    def serialize event_args
-      @serializer.call(event_args)
+    def serialize event_data
+      @serializer.call(event_data)
     end
 
     def build_event_data(aggregate, timestamp, event)
@@ -73,7 +68,8 @@ module SandthornDriverSequel
         aggregate_table_id: aggregate.id,
         aggregate_version: aggregate.aggregate_version,
         event_name: event.event_name,
-        event_data: serialize(event.event_args),
+        event_data: serialize(event.event_data),
+        event_metadata: serialize(event.event_metadata),
         timestamp: timestamp
       }
     end

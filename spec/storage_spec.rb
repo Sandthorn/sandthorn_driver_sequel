@@ -56,6 +56,7 @@ module SandthornDriverSequel
           aggregate_version: 1,
           event_name: "foo",
           event_data: "bar",
+          event_metadata: nil,
           timestamp: Time.now.utc
       }
       event_id = storage.events.insert(data)

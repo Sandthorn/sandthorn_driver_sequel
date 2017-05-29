@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
 
   spec.add_development_dependency "rspec"
@@ -32,7 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "autotest-standalone"
   spec.add_development_dependency "uuidtools"
   spec.add_development_dependency "ruby-beautify"
-  spec.add_development_dependency "guard-rspec"
 
-  spec.add_runtime_dependency     "sequel", "~> 4.17"
+  spec.add_runtime_dependency     "sequel"
 end

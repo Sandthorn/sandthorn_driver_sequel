@@ -5,25 +5,25 @@ module SandthornDriverSequel
     before(:each) { prepare_for_test }
     let(:test_events_a) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_args: {:method_name=>"new", :method_args=>[], :attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
-      e << {aggregate_version: 2, event_name: "foo", event_args: "A2"}
-      e << {aggregate_version: 3, event_name: "bard", event_args: "A3"}
+      e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}, event_metadata: {a: 1}}
+      e << {aggregate_version: 2, event_name: "foo", event_data: "A2", event_metadata: {a: 1}}
+      e << {aggregate_version: 3, event_name: "bard", event_data: "A3", event_metadata: {a: 1}}
     end
     let(:aggregate_id_a) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
     let(:test_events_b) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_args: "B1" }
-      e << {aggregate_version: 2, event_name: "foo", event_args: "B2"}
-      e << {aggregate_version: 3, event_name: "bar", event_args: "B3"}
+      e << {aggregate_version: 1, event_name: "new", event_data: "B1", event_metadata: 1}
+      e << {aggregate_version: 2, event_name: "foo", event_data: "B2", event_metadata: 2}
+      e << {aggregate_version: 3, event_name: "bar", event_data: "B3", event_metadata: 3}
     end
     let(:aggregate_id_b) {"c0456e26-1234-4f67-92fa-130b3a31a39a"}
     let(:test_events_c) do
       e = []
-      e << {aggregate_version: 1, event_name: "new", event_args: "C1" }
+      e << {aggregate_version: 1, event_name: "new", event_data: "C1", event_metadata: 4}
     end
     let(:test_events_c_2) do
       e = []
-      e << {aggregate_version: 2, event_name: "flubber", event_args: "C2" }
+      e << {aggregate_version: 2, event_name: "flubber", event_data: "C2", event_metadata: 6}
     end
     let(:aggregate_id_c) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
     before(:each) do
@@ -82,47 +82,12 @@ module SandthornDriverSequel
         it "should contain only events for aggregate_id_a" do
           events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
         end
-      end
-    end
-    context "when using :get_new_events_after_event_id_matching_classname to get events" do
-      context "and getting events for SandthornDriverSequel::EventStore after 0" do
-        let(:events) {event_store.get_new_events_after_event_id_matching_classname 0, SandthornDriverSequel::EventStore}
-        it "should find 3 events" do
-          expect(events.length).to eql 3
-        end
-        it "should be in sequence_number order" do
-          check = 0
-          events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
-        end
-        it "should contain only events for aggregate_id_a" do
-          events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_a  }
-        end
-        it "should be able to get events after a sequence number" do
-          new_from = events[1][:sequence_number]
-          ev = event_store.get_new_events_after_event_id_matching_classname new_from, SandthornDriverSequel::EventStore
-          expect(ev.last[:aggregate_version]).to eql 3
-          expect(ev.length).to eql 1
-        end
-        it "should be able to limit the number of results" do
-          ev = event_store.get_new_events_after_event_id_matching_classname 0, SandthornDriverSequel::EventStore, take: 2
-          expect(ev.length).to eql 2
-          expect(ev.last[:aggregate_version]).to eql 2
-        end
-      end
-      context "and getting events for String after 0" do
-        let(:events) {event_store.get_new_events_after_event_id_matching_classname 0, "String"}
-        it "should find 3 events" do
-          expect(events.length).to eql 2
-        end
-        it "should be in sequence_number order" do
-          check = 0
-          events.each { |e| expect(e[:sequence_number]).to be > check; check = e[:sequence_number] }
-        end
-        it "should contain only events for aggregate_id_c" do
-          events.each { |e| expect(e[:aggregate_id]).to eql aggregate_id_c  }
-        end
-      end
-    end
 
+        it "shoul have correct event_metadata" do
+          events.each { |e| expect(e[:event_metadata]).to eql ({a: 1})  }
+        end
+      end
+    end
+  
   end
 end
