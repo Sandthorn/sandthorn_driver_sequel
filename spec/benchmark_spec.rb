@@ -10,7 +10,7 @@ module Sandthorn
       before(:each) { prepare_for_test }
       let(:test_events_20_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
+        e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}
         19.times do |i| 
            e << {aggregate_version: i+2, event_name: "foo", event_data: "A2"}
         end
@@ -22,7 +22,7 @@ module Sandthorn
       end
       let(:test_events_two_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_deltas=>[{:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}]}}
+        e << {aggregate_version: 1, event_name: "new", event_data: {:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}
         e << {aggregate_version: 2, event_name: "foo", event_data: "A2"}
       end
       let(:aggregate_id) {"c0456e26-2345-4f67-92fa-130b3a31a39a"}
