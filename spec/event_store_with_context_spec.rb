@@ -8,7 +8,7 @@ module SandthornDriverSequel
     context("when saving in one context and retrieving in another") do
       let(:test_events) do
         e = [] 
-        e << {aggregate_version: 1, event_name: "new",  event_data: {:attribute_name=>"aggregate_id", :old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}, event_metadata: nil}
+        e << {aggregate_version: 1, event_name: "new",  event_data: {:aggregate_id => {:old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}, event_metadata: nil}
         e << {aggregate_version: 2, event_name: "foo",  event_data: "noop", event_metadata: nil}
         e << {aggregate_version: 3, event_name: "flubber",  event_data: "noop", event_metadata: nil}
       end
