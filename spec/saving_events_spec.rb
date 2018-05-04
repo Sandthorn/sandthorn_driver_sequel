@@ -6,9 +6,9 @@ module SandthornDriverSequel
     context "when saving a prefectly sane event stream" do
       let(:test_events) do
         e = []
-        e << {aggregate_version: 1, event_name: "new", event_data: {:aggregate_id => {:old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}, event_metadata: [1,2,3]}
-        e << {aggregate_version: 2, event_name: "foo", event_data: "noop", event_metadata: nil}
-        e << {aggregate_version: 3, event_name: "flubber", event_data: "noop", event_metadata: nil}
+        e << {aggregate_version: 1, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "new", event_data: {}, event_metadata: [1,2,3]}
+        e << {aggregate_version: 2, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "foo", event_data: "noop", event_metadata: nil}
+        e << {aggregate_version: 3, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "flubber", event_data: "noop", event_metadata: nil}
       end
 
       let(:aggregate_id) { "c0456e26-e29a-4f67-92fa-130b3a31a39a" }
@@ -36,13 +36,13 @@ module SandthornDriverSequel
     context "when saving two aggregate types" do
       let(:test_events_1) do
         e = []
-        e << {aggregate_version: 1, event_name: "new", event_data: {:aggregate_id => {:old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}, event_metadata: nil}
-        e << {aggregate_version: 2, event_name: "foo", event_data: "noop", event_metadata: nil}
-        e << {aggregate_version: 3, event_name: "flubber", event_data: "noop", event_metadata: nil}
+        e << {aggregate_version: 1, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "new", event_data: {}, event_metadata: nil}
+        e << {aggregate_version: 2, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "foo", event_data: "noop", event_metadata: nil}
+        e << {aggregate_version: 3, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "flubber", event_data: "noop", event_metadata: nil}
       end
       let(:test_events_2) do
         e = []
-        e << {aggregate_version: 1, event_name: "new", event_data: {:aggregate_id => {:old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}, event_metadata: nil}
+        e << {aggregate_version: 1, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "new", event_data: {}, event_metadata: nil}
       end
       let(:aggregate_id_1) {"c0456e26-e29a-4f67-92fa-130b3a31a39a"}
       let(:aggregate_id_2) {"c0456e26-e92b-4f67-92fa-130b3a31b93b"}
@@ -65,9 +65,9 @@ module SandthornDriverSequel
     context "when saving events that have no aggregate_version" do
       let(:test_events) do
         e = []
-        e << {aggregate_version: nil, event_name: "new", event_data: {:aggregate_id => {:old_value=>nil, :new_value=>"0a74e545-be84-4506-8b0a-73e947856327"}}, event_metadata: nil}
-        e << {aggregate_version: nil, event_name: "foo", event_data: "noop", event_metadata: nil}
-        e << {aggregate_version: nil, event_name: "flubber", event_data: "noop", event_metadata: nil}
+        e << {aggregate_version: nil, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "new", event_data: {}, event_metadata: nil}
+        e << {aggregate_version: nil, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "foo", event_data: "noop", event_metadata: nil}
+        e << {aggregate_version: nil, aggregate_id: "0a74e545-be84-4506-8b0a-73e947856327", event_name: "flubber", event_data: "noop", event_metadata: nil}
       end
 
       let(:aggregate_id) { "c0456e26-e29a-4f67-92fa-130b3a31a39a" }
