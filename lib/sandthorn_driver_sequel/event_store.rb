@@ -36,8 +36,8 @@ module SandthornDriverSequel
       end
     end
 
-    def find aggregate_id, aggregate_type
-      aggregate_events(aggregate_id)
+    def find aggregate_id, aggregate_type, after_aggregate_version = 0
+      aggregate_events(aggregate_id, after_aggregate_version)
     end
 
     def get_events(*args)
@@ -49,10 +49,10 @@ module SandthornDriverSequel
 
     private
 
-    def aggregate_events(aggregate_id)
+    def aggregate_events(aggregate_id, after_aggregate_version = 0)
       driver.execute do |db|
         event_access = get_event_access(db)
-        event_access.find_events_by_aggregate_id(aggregate_id)
+        event_access.find_events_by_aggregate_id(aggregate_id, after_aggregate_version)
       end
     end
 

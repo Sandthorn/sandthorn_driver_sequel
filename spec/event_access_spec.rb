@@ -33,6 +33,11 @@ module SandthornDriverSequel
           event_name: "foo",
           event_data: "foo_data",
           event_metadata: nil
+        },{
+          aggregate_version: 3,
+          event_name: "foo2",
+          event_data: "foo_data2",
+          event_metadata: nil
         }
       ]
     end
@@ -80,10 +85,37 @@ module SandthornDriverSequel
           expect(stored_events.size).to eq(events.size)
           expect(stored_events).to all(respond_to(:merge))
         end
+
         it "returns events in correct order" do
           expect(stored_events.first[:aggregate_version] < stored_events.last[:aggregate_version]).to be_truthy
           expect(stored_events.first[:sequence_number] < stored_events.last[:sequence_number]).to be_truthy
         end
+
+      end
+
+      context "when using after_aggregate_version" do
+        before do
+          access.store_events(aggregate, events)
+        end
+
+        # exclude the first event
+        let(:stored_events) { access.find_events_by_aggregate_id(aggregate.aggregate_id, 1) }
+
+        it "returns correct events" do
+          expect(stored_events.map(&:aggregate_table_id)).to all(eq(aggregate.id))
+          expect(stored_events.size).to eq(events.size-1)
+          expect(stored_events).to all(respond_to(:merge))
+        end
+
+        it "returns events in correct order" do
+          expect(stored_events.first[:aggregate_version] < stored_events.last[:aggregate_version]).to be_truthy
+          expect(stored_events.first[:sequence_number] < stored_events.last[:sequence_number]).to be_truthy
+        end
+
+        it "should not return event with aggregate_version = 1" do
+          expect(stored_events.first[:aggregate_version]).not_to eq(1)
+        end
+        
       end
     end
 
