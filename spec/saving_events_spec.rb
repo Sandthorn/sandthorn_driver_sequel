@@ -28,7 +28,7 @@ module SandthornDriverSequel
         expect(event[:event_name]).to eql("new")
         expect(event[:aggregate_id]).to eql aggregate_id
         expect(event[:aggregate_version]).to eql 1
-        expect(event[:sequence_number]).to be_a(Fixnum)
+        expect(event[:sequence_number]).to be_a(Integer)
         expect(event[:timestamp]).to be_a(Time)
       end
     end
@@ -87,7 +87,7 @@ module SandthornDriverSequel
         expect(event[:event_name]).to eql("new")
         expect(event[:aggregate_id]).to eql aggregate_id
         expect(event[:aggregate_version]).to eql 1
-        expect(event[:sequence_number]).to be_a(Fixnum)
+        expect(event[:sequence_number]).to be_a(Integer)
         expect(event[:timestamp]).to be_a(Time)
       end
     end
